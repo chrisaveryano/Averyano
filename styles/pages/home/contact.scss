@@ -1,0 +1,64 @@
+.home__contact {
+  @extend %page;
+}
+
+.home__contact__wrapper {
+  @extend %center;
+  height: 100vh;
+  position: relative;
+}
+
+.home__contact__button {
+  width: 40rem;
+  height: 40rem;
+  transform: translate(0, 0) rotate(254deg) scale(1);
+  transition-property: transform;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(0, 0.83, 0.31, 1.07);
+  // animation: rotating 1.75s $ease-in-out infinite;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: 50%;
+    background: linear-gradient(
+      to bottom,
+      rgb(255, 255, 255),
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+@keyframes circleAnimate {
+  0% {
+    transform: translate(0, 0) rotate(254deg) scale(1);
+  }
+  100% {
+    transform: translate(0, 0) rotate(2774deg) scale(1);
+  }
+}
+.circleanimate {
+  animation: circleAnimate 3.5s cubic-bezier(0.84, 0.12, 0, 0.84);
+}
+.home__contact__button__text {
+  @extend %title-36;
+
+  font-weight: bolder;
+  text-transform: uppercase;
+  max-width: 15.5rem;
+  position: absolute;
+  left: 50%;
+  top: 49%;
+  transform: translate(-50%, -49%);
+  opacity: 1;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

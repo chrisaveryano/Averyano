@@ -1,0 +1,54 @@
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+
+html {
+  @extend %cover;
+
+  font-family: $font-raleway-300;
+  font-size: calc(100vw / 1440 * 10);
+  line-height: 1;
+
+  color: $color-white-night;
+  background: $color-dark-night;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  @include media('<phone') {
+    font-size: calc(100vw / 750 * 15);
+  }
+
+  @include media('<tablet') {
+    overflow: auto;
+    overflow-x: hidden;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: bold;
+}
+
+.content {
+  overflow: hidden;
+}

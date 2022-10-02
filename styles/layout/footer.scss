@@ -1,0 +1,125 @@
+.footer {
+  position: relative;
+}
+
+.footer__wrapper {
+  display: flex;
+  align-items: flex-end;
+}
+
+.footer__left {
+  @extend %description-16;
+
+  flex-grow: 1;
+  padding-bottom: 3.2rem;
+  padding-left: 6.4rem;
+
+  @include media('<phone') {
+    padding-left: 1.25rem;
+    padding-bottom: 7.5rem;
+    font-size: 110%;
+  }
+}
+
+.footer__right {
+}
+
+.footer__right__wrapper {
+  display: flex;
+}
+
+.footer__right__links {
+  @extend %description-24;
+  position: relative;
+}
+
+.footer__right__links__menu {
+  padding: 4.7rem 5.8rem;
+
+  @include media('<phone') {
+    padding: 4.7rem 3.8rem;
+  }
+}
+
+.footer__right__links__terms {
+}
+
+.footer__right__socials {
+  @extend %description-16;
+  position: relative;
+}
+
+.footer__right__hr {
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 1),
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+
+  width: 2px;
+  margin: 10px 2px;
+  position: absolute;
+  height: 100%;
+}
+
+.footer__right__socials__menu {
+  padding: 4.7rem 5.8rem;
+
+  @include media('<phone') {
+    padding: 4.7rem 3.8rem;
+  }
+}
+
+.footer__right__socials__cookie {
+}
+
+.footer__list {
+}
+
+.footer__list__item {
+  margin-top: 2.8rem;
+
+  &:first-of-type {
+    margin-top: 0rem;
+  }
+
+  @include media('<phone') {
+    & {
+      font-size: 55%;
+    }
+  }
+}
+.footer__list__item .footer__list__link {
+  @extend %link--hidden;
+  min-height: 4.2rem;
+}
+.footer__list__item--socials .footer__list__link img {
+  padding-right: 0.8rem;
+  margin-bottom: -0.25rem;
+}
+
+@include media('<phone') {
+  .footer__list__item--socials .footer__list__link img {
+    max-width: 16px;
+  }
+}
+
+.footer__list__item--socials .footer__list__link {
+  font-size: 80%;
+  display: flex;
+  justify-content: flex-start;
+}
+.footer__list__item--socials {
+  margin-top: 3.8rem;
+
+  &:first-of-type {
+    margin-top: 0rem;
+  }
+}
+
+.footer__list__link:hover {
+  opacity: 0.75;
+}

@@ -1,0 +1,90 @@
+.preloader {
+  @extend %cover;
+  @extend %center;
+  flex-direction: column;
+  text-align: center;
+  font-weight: normal;
+  background: $color-dark-night;
+  color: $color-white-night;
+
+  z-index: z('preloader');
+  display: flex;
+  height: 100vh;
+  position: fixed;
+}
+
+.preloader__text {
+  @extend %title-36;
+
+  font-weight: bolder;
+  text-transform: uppercase;
+  padding-bottom: 2rem;
+}
+
+.preloader__number {
+  @extend %description-16;
+}
+
+.preloader__circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40rem;
+  height: 40rem;
+  animation: rotating 1.75s $ease-in-out infinite;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: 50%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@keyframes rotating {
+  0% {
+    transform: translate(-50%, -50%) rotate(18deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(377deg);
+  }
+}
+// .preloader__text {
+//   font-size: 0;
+
+//   max-width: 66rem;
+//   span {
+//     display: inline-block;
+//     overflow: hidden;
+//   }
+
+//   span span {
+//     @extend %title-53;
+//   }
+// }
+
+// .preloader__number {
+//   @extend %description-14;
+
+//   position: absolute;
+//   bottom: 7.3rem;
+//   left: 50%;
+//   overflow: hidden;
+//   transform: translateX(-50%);
+
+//   // @include media('<phone') {
+//   //   font-size: 2.4rem;
+//   // }
+// }

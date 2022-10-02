@@ -1,0 +1,50 @@
+block variables
+
+doctype html 
+html(class=isDesktop ? "desktop" : isTablet ? "tablet" : isPhone ? "phone" : "" lang="en")
+	head
+		// Meta
+		meta(charset="utf-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+
+		base(href="/")
+
+		title='Chris Averyano'
+
+		meta(name="description", content='Web Designer & Developer')
+		meta(name="keywords", content="webdesign,webdevelopment")
+		meta(name="msapplication-TileColor", content="#da532c")
+		meta(name="theme-color", content="#ffffff")
+
+		meta(property="og:type" content="website")
+		meta(property="og:site_name" content='Chris Averyano')
+		meta(property="og:title" content='Web Developer')
+		meta(property="og:description" content='Web Designer & Developer. Communication Design, Posters, Brand identity & UI Design. Bring your ideas to the email chrisaveryano@gmail.com to get started.')
+		meta(property="og:image" content='https://averyano.com/images/og_image.jpg')
+
+		meta(name="twitter:card" content="summary_large_image")
+		meta(name="twitter:title" content='Chris Averyano')
+		meta(name="twitter:description" content='Averyano Design is a forward-thinking web design studio, that specializes on portfolio sites, business presentation sites, and E-commerce. Bring your ideas to the email below to get started.')
+		meta(name="twitter:image" content='https://averyano.com/images/og_image.jpg')
+
+		// Styles
+		link(rel="apple-touch-icon", sizes="180x180", href="./images/apple-touch-icon.png")
+		link(rel="icon", type="image/png", sizes="32x32", href="./images/favicon-32x32.png")
+		link(rel="icon", type="image/png", sizes="16x16", href="./images/favicon-16x16.png")
+		link(rel="manifest", href="./site.webmanifest")
+		link(rel="mask-icon", href="./images/safari-pinned-tab.svg", color="#5bbad5")
+
+		// Stylesheets
+		link(rel="stylesheet", href="./main.css")
+
+
+
+
+	body
+		include ./partials/preloader
+		include ./partials/navigation
+
+		.content#content(data-template='home')
+			block content
+
+		script(src="./main.js")
