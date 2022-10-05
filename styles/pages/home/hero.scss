@@ -146,6 +146,11 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+
+    @include media('>tablet') {
+      opacity: 0;
+      transform: scale(0);
+    }
   }
 
   @include media('<phone') {
@@ -214,21 +219,21 @@
 }
 
 .hero__tonys-pink {
-  background: $color-tonys-pink;
+  // background: $color-tonys-pink;
 }
 .hero__goldenrod {
-  background: $color-goldenrod;
+  // background: $color-goldenrod;
 }
 
 .hero__biloba-flower {
-  background: $color-biloba-flower;
+  // background: $color-biloba-flower;
 }
 .hero__lochmara {
-  background: $color-lochmara;
+  // background: $color-lochmara;
 }
 
 .hero__monte-carlo {
-  background: $color-monte-carlo;
+  // background: $color-monte-carlo;
 }
 
 @keyframes heromoves {

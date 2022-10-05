@@ -175,30 +175,6 @@ export default class Page {
   //     return new AsyncLoad(element);
   //   });
   // }
-  show() {
-    return new Promise((resolve) => {
-      // ColorsManager.change({
-      //   backgroundColor: this.element.getAttribute('data-background'),
-      //   color: this.element.getAttribute('data-color'),
-      // });
-      this.animationIn = GSAP.timeline();
-      this.animationIn.fromTo(
-        this.element,
-        { autoAlpha: 0 },
-        {
-          autoAlpha: 1,
-          onComplete: resolve,
-        }
-      );
-
-      // when animations are complete
-      this.animationIn.call((_) => {
-        this.addEventListeners();
-
-        resolve();
-      });
-    });
-  }
 
   hide() {
     return new Promise((resolve) => {
@@ -220,8 +196,12 @@ export default class Page {
     this.scroll.target += pixelY;
   }
 
-  onResize() {
+  onResize(e) {
     this.isResizing = true;
+
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize(e);
+    }
 
     if (this.element && this.element.classList.contains('home')) {
       // Resizing homepage
@@ -269,9 +249,6 @@ export default class Page {
       this.isResizing = false;
     }
 
-    if (this.elements.playingVideos.length > 0) {
-      console.log(this.elements.playingVideos);
-    }
     // each(this.animationsTitles, (animation) => animation.onResize());
   }
 
@@ -300,7 +277,6 @@ export default class Page {
     // Update translateY only if the movement is actually made
     if (this.scroll.current.toFixed() != this.scroll.target) {
       if (this.elements.wrapper) {
-        // console.log('upd 1 (page)');
         this.elements.wrapper.style[
           this.transformPrefix
         ] = `translateY(-${this.scroll.current.toFixed()}px)`;
@@ -324,6 +300,47 @@ export default class Page {
 
   removeEventListeners() {
     // window.removeEventListener('mousewheel', this.onWheelEvent);
+  }
+
+  // .home__hero__left
+
+  show(animation) {
+    return new Promise((resolve) => {
+      if (this.id === 'home') {
+      }
+      if (animation) {
+        this.animationIn = animation;
+      } else {
+        this.animationIn = GSAP.timeline();
+        this.animationIn.fromTo(
+          this.element,
+          {
+            autoAlpha: 0,
+          },
+          {
+            autoAlpha: 1,
+          }
+        );
+      }
+
+      this.animationIn.call((_) => {
+        this.addEventListeners();
+        resolve();
+      });
+    });
+  }
+
+  hide() {
+    return new Promise((resolve) => {
+      this.destroy();
+
+      this.animationIn = GSAP.timeline();
+
+      this.animationIn.to(this.element, {
+        autoAlpha: 0,
+        onComplete: resolve,
+      });
+    });
   }
 
   destroy() {

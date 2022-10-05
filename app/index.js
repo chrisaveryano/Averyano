@@ -1,19 +1,14 @@
-// TODO
-// 1. Increase font size for mobile + Nav font size
-// 2. Fix the hero section issue on mobile (doesn't happen in Dev console)
-// 3. Fix the mouse disappear issue after the video gets paused. (enable cursor on click)
-// 4. Google Analytics ?
-
 import NormalizeWheel from 'normalize-wheel';
 
 import Preloader from './components/Preloader';
 import Video from './components/Video';
+import Navigation from './components/Navigation';
 
 import Home from './pages/Home';
 
 class App {
   constructor() {
-    console.log('v1.06');
+    console.log('v1.07');
 
     console.log(
       '%c AV',
@@ -28,15 +23,16 @@ class App {
     this.createPreloader();
     this.createVideo();
 
+    this.createNavigation();
+
     this.createPages();
 
-    // Request animaion frame hijack
     this.update();
 
     this.onResize();
     this.onWheel();
 
-    this.addEventListeners();
+    // this.addEventListeners();
   }
 
   checkMedia() {
@@ -64,6 +60,10 @@ class App {
     this.page = this.pages[this.template];
     this.page.create();
   }
+
+  createNavigation() {
+    this.navigation = new Navigation();
+  }
   /***
    * Events.
    * **/
@@ -78,14 +78,28 @@ class App {
   onPreloaded() {
     this.preloader.destroy();
     this.onResize();
-    this.page.show();
+
+    if (this.page && this.page.show) {
+      this.page.show();
+
+      // homepage hero
+      if (this.template === 'home') {
+        const isMobile = !this.media.matches ? false : true;
+        this.page.showHero(isMobile);
+      }
+    }
+
+    if (this.navigation && this.navigation.show) {
+      this.navigation.show();
+    }
+    this.addEventListeners();
   }
 
-  onResize() {
+  onResize(e) {
     this.checkMedia();
 
     if (this.page && this.page.onResize) {
-      this.page.onResize();
+      this.page.onResize(e);
     }
   }
   /***
