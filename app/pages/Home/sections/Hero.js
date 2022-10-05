@@ -80,21 +80,14 @@ export default class Hero extends Component {
     });
   }
 
-  onResize(e) {
-    this.galleryBounds = this.heroGridWrapper.getBoundingClientRect();
-    // console.log(e);
-    // console.log(e);
-    // this.sizes = e.sizes;
+  // onResize(e) {
+  //   this.galleryBounds = this.heroGridWrapper.getBoundingClientRect();
 
-    this.gallerySizes = {
-      height: this.galleryBounds.height / window.innerHeight,
-      width: this.galleryBounds.width / window.innerWidth,
-    };
-
-    console.log(this.heroGridWrapper.getBoundingClientRect());
-    console.log(this.heroGrid.getBoundingClientRect());
-    // console.log(this.gallerySizes);
-  }
+  //   this.gallerySizes = {
+  //     height: this.galleryBounds.height / window.innerHeight,
+  //     width: this.galleryBounds.width / window.innerWidth,
+  //   };
+  // }
   addEventListeners() {}
 
   removeEventListeners() {}

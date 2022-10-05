@@ -12652,20 +12652,14 @@ class Hero extends Component {
         resolve();
       });
     });
-  }
+  } // onResize(e) {
+  //   this.galleryBounds = this.heroGridWrapper.getBoundingClientRect();
+  //   this.gallerySizes = {
+  //     height: this.galleryBounds.height / window.innerHeight,
+  //     width: this.galleryBounds.width / window.innerWidth,
+  //   };
+  // }
 
-  onResize(e) {
-    this.galleryBounds = this.heroGridWrapper.getBoundingClientRect(); // console.log(e);
-    // console.log(e);
-    // this.sizes = e.sizes;
-
-    this.gallerySizes = {
-      height: this.galleryBounds.height / window.innerHeight,
-      width: this.galleryBounds.width / window.innerWidth
-    };
-    console.log(this.heroGridWrapper.getBoundingClientRect());
-    console.log(this.heroGrid.getBoundingClientRect()); // console.log(this.gallerySizes);
-  }
 
   addEventListeners() {}
 

@@ -9,7 +9,6 @@ export default class Image {
 
     this.maxY = maxY;
     this.index = i;
-    console.log(this);
   }
 
   create() {
