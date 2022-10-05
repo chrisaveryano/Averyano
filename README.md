@@ -33,18 +33,9 @@ npm install
 npm run start
 ```
 
-# Plans for the future
-
-```sh
-1. Create an individual page for each of my projects
-2. Add color modes
-3. Improve the user experience and interface
-
-```
-
 # Credits
 
-Kudos to [bizarro](https://github.com/bizarro/) for the project structure, and his amazing video tutorials. I'm in love with [Awwwards](https://www.awwwards.com/) and modern web design! These sites get me inspired.
+Kudos to [bizarro](https://github.com/bizarro/) for the project structure, and his amazing video tutorials. I'm in love with [Awwwards](https://www.awwwards.com/) and modern web design!
 
 ## Misc
 
