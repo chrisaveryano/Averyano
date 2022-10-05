@@ -118,9 +118,12 @@
   position: absolute;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100%;
-  transform: rotate(-15deg) scale(0.4) translate(-110%, -100%);
+
+  width: fit-content;
+  height: fit-content;
+
+  transform: rotate(-15deg) scale(0.4) translateX(-25%);
+  transform-origin: 0 0;
 
   display: flex;
   flex-direction: column;
@@ -129,6 +132,9 @@
 .hero__grid__wrapper {
   position: relative;
   display: grid;
+
+  width: inherit;
+  height: inherit;
   grid-gap: 3rem;
   grid-template-columns: repeat(24, 20rem);
   grid-template-rows: repeat(21, 20rem);

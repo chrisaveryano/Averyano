@@ -24,6 +24,7 @@ export default class Page {
 
       preloaders: '[data-src]',
     };
+
     this.id = id;
     this.transformPrefix = Prefix('transform');
 
@@ -61,7 +62,6 @@ export default class Page {
       each(selector, (link) => {
         const href = link.href;
         const linkNaming = href.split('#')[1];
-        // link.href = '';
 
         link.addEventListener('click', (e) => {
           e.preventDefault();
@@ -79,6 +79,7 @@ export default class Page {
         });
       });
     };
+
     activateLink(this.selectorChildren.footerLinks);
     activateLink(this.selectorChildren.navigationLinks);
 
@@ -230,6 +231,7 @@ export default class Page {
         document.querySelector('.home__hero').style.height = `100vh`;
       }
     }
+
     if (this.elements.wrapper) {
       this.scroll.limit =
         this.elements.wrapper.clientHeight - window.innerHeight;

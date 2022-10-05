@@ -84,7 +84,8 @@ class App {
 
       // homepage hero
       if (this.template === 'home') {
-        const isMobile = !this.media.matches ? false : true;
+        const media = window.matchMedia('(max-width: 768px)');
+        const isMobile = !media.matches ? false : true;
         this.page.showHero(isMobile);
       }
     }
