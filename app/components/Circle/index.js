@@ -52,6 +52,7 @@ export default class Circle {
       }
     });
 
+    // animation for the circle using atan2 formula (decided to remove it)
     // this.elementContainer.onmousemove = (evt) => {
     //   this.mouse.x = evt.clientX - window.innerWidth / 2;
     //   this.mouse.y = evt.clientY - window.innerHeight / 2;

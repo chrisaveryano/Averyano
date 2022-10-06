@@ -11803,8 +11803,7 @@ class Paragraph extends Animation_Animation {
       element,
       elements
     });
-  } // @todo - implement same animation for subtitle and paragraph
-
+  }
 
   animateIn() {
     if (this.isAnimatedIn) return;
@@ -11821,7 +11820,6 @@ class Paragraph extends Animation_Animation {
           autoAlpha: 0,
           y: '100%'
         }, {
-          // delay: 1 * 0.2,
           autoAlpha: 1,
           duration: 1.5,
           ease: 'expo.out',
@@ -11838,7 +11836,6 @@ class Paragraph extends Animation_Animation {
           autoAlpha: 0,
           x: '-100%'
         }, {
-          // delay: 1 * 0.2,
           autoAlpha: 1,
           duration: 1.5,
           ease: 'expo.out',
@@ -11849,28 +11846,7 @@ class Paragraph extends Animation_Animation {
           x: '0%'
         });
       }
-    }); // this.element.childNodes.forEach((el, i) => {
-    //   console.log(el);
-    //   this.timelineIn.fromTo(
-    //     el,
-    //     {
-    //       autoAlpha: 0,
-    //       y: '100%',
-    //     },
-    //     {
-    //       autoAlpha: 1,
-    //       delay: i * 0.2,
-    //       duration: 1.5,
-    //       ease: 'expo.out',
-    //       stagger: {
-    //         amount: 0.5,
-    //         axis: 'y',
-    //       },
-    //       y: '0%',
-    //     },
-    //     0
-    //   );
-    // });
+    });
   }
 
   animateOut() {
@@ -11882,20 +11858,13 @@ class Paragraph extends Animation_Animation {
           autoAlpha: 1,
           y: '100%'
         }, {
-          // delay: 1 * 0.2,
           autoAlpha: 0,
           duration: 0,
           ease: 'expo.out',
           y: '0%'
         });
       }
-    }); // GSAP.set(this.element.childNodes, { duration: 0, autoAlpha: 0 });
-    // this.element.childNodes.forEach((el) => {
-    //   GSAP.set(el, {
-    //     duration: 0,
-    //     autoAlpha: 0,
-    //   });
-    // });
+    });
   }
 
 }
@@ -11909,8 +11878,7 @@ class FadeIn extends Animation_Animation {
       element,
       elements
     });
-  } // @todo - implement same animation for subtitle and paragraph
-
+  }
 
   animateIn() {
     if (this.isAnimatedIn) return;
@@ -11926,7 +11894,6 @@ class FadeIn extends Animation_Animation {
         gsapWithCSS.fromTo(el, {
           autoAlpha: 0
         }, {
-          // delay: 1 * 0.2,
           autoAlpha: 1,
           duration: 1.5,
           ease: 'expo.out'
@@ -11943,21 +11910,58 @@ class FadeIn extends Animation_Animation {
         gsapWithCSS.fromTo(el, {
           autoAlpha: 1
         }, {
-          // delay: 1 * 0.2,
           autoAlpha: 0
         });
       }
-    }); // GSAP.set(this.element.childNodes, { duration: 0, autoAlpha: 0 });
-    // this.element.childNodes.forEach((el) => {
-    //   GSAP.set(el, {
-    //     duration: 0,
-    //     autoAlpha: 0,
-    //   });
-    // });
+    });
+  }
+
+}
+;// CONCATENATED MODULE: ./app/animations/NavBg.js
+
+ // import { calculate, split } from 'utils/text';
+
+class NavBg extends Animation_Animation {
+  constructor(element, elements) {
+    super({
+      element,
+      elements
+    });
+    this.navWrapper = '.navigation__wrapper';
+  }
+
+  animateIn() {
+    if (this.isAnimatedIn) return;
+    this.isAnimatedIn = true;
+    this.timelineIn = gsapWithCSS.timeline({
+      onComplete: _ => {
+        this.isAnimatedIn = false;
+      }
+    });
+    gsapWithCSS.fromTo('.navigation__wrapper', {
+      backgroundColor: `rgba(3, 3, 3, 0.2)`
+    }, {
+      backgroundColor: `rgba(3, 3, 3, 0)`,
+      duration: 1,
+      ease: 'expo.out'
+    });
+  }
+
+  animateOut() {
+    if (this.isAnimatedIn) return; // convert HTMLCollection into an array
+
+    gsapWithCSS.fromTo('.navigation__wrapper', {
+      backgroundColor: `rgba(3, 3, 3, 0)`
+    }, {
+      backgroundColor: `rgba(3, 3, 3, 0.2)`,
+      duration: 1,
+      ease: 'expo.out'
+    });
   }
 
 }
 ;// CONCATENATED MODULE: ./app/classes/Page.js
+
 
 
 
@@ -11977,11 +11981,12 @@ class Page {
       animationsFade: '[data-animation="fade"]',
       animationsFloating: '[data-animation="floating"]',
       animationsNav: '.navigation',
-      animationsNavTrigger: '.home__gallery',
+      animationsNavTrigger: '.home__hero',
       preloaders: '[data-src]'
     };
     this.id = id;
     this.transformPrefix = prefix_default()('transform');
+    this.navActive = false;
     this.scroll = {
       current: 0,
       target: 0,
@@ -12054,8 +12059,7 @@ class Page {
       target: 0,
       last: 0,
       limit: 1000
-    }; // we use lodash to forEach through Object {}
-
+    };
     each_default()(this.selectorChildren, (entry, key) => {
       if (entry instanceof window.HTMLElement || entry instanceof window.NodeList || Array.isArray(entry)) {
         this.elements[key] = entry;
@@ -12071,7 +12075,7 @@ class Page {
         }
       }
     });
-    this.createAnimations(); // this.createPreloader();
+    this.createAnimations();
   }
 
   checkMedia() {
@@ -12090,13 +12094,9 @@ class Page {
   }
 
   createAnimations() {
-    // this.animations = [];
-    // this.animationsTitles = map(this.elements.animationsTitles, (element) => {
-    //   return new Title(element);
-    // });
     this.animationsParagraphs = map_default()(this.elements.animationsParagraphs, element => {
       return new Paragraph(element);
-    }); // If it's a single element
+    });
 
     if (!this.elements.animationsFade.length) {
       this.animationsFade = new FadeIn(this.elements.animationsFade);
@@ -12104,15 +12104,10 @@ class Page {
       this.animationsFade = map_default()(this.elements.animationsFade, element => {
         return new FadeIn(element);
       });
-    } // @todo - show background below navigation
-    // this.navigation = new Navigation();
+    }
 
-  } // createPreloader() {
-  //   this.preloaders = map(this.elements.preloaders, (element) => {
-  //     return new AsyncLoad(element);
-  //   });
-  // }
-
+    this.animationsNav = new NavBg(this.elements.animationsNavTrigger);
+  }
 
   hide() {
     return new Promise(resolve => {
@@ -12143,14 +12138,13 @@ class Page {
     }
 
     if (this.element && this.element.classList.contains('home')) {
-      // Resizing homepage
+      // Resizing homepage, if it's mobile device we set the Height to match mobile viewport
       if (this.media.matches) {
         this.mediaHeight.current = window.innerHeight;
 
         if (this.mediaHeight.previous === 0) {
           this.mediaHeight.previous = window.innerHeight;
-        } // Change hero section height to match mobile height (including browser UI)
-
+        }
 
         if (this.mediaHeight.current === this.mediaHeight.previous) {
           document.querySelector('.home__hero').style.height = `${this.mediaHeight.current}px`;
@@ -12180,8 +12174,7 @@ class Page {
       }
 
       this.isResizing = false;
-    } // each(this.animationsTitles, (animation) => animation.onResize());
-
+    }
   } // Loop
 
 
@@ -12214,8 +12207,7 @@ class Page {
   addEventListeners() {}
 
   removeEventListeners() {// window.removeEventListener('mousewheel', this.onWheelEvent);
-  } // .home__hero__left
-
+  }
 
   show(animation) {
     return new Promise(resolve => {
@@ -12517,7 +12509,8 @@ class Circle {
           this.modal.create();
         }
       }
-    }); // this.elementContainer.onmousemove = (evt) => {
+    }); // animation for the circle using atan2 formula (decided to remove it)
+    // this.elementContainer.onmousemove = (evt) => {
     //   this.mouse.x = evt.clientX - window.innerWidth / 2;
     //   this.mouse.y = evt.clientY - window.innerHeight / 2;
     //   this.rotation = Math.atan2(this.mouse.y, this.mouse.x);
@@ -12574,9 +12567,6 @@ class Contact extends Component {
 
 
 
-
- // import { split } from 'utils/text';
-
 class Hero extends Component {
   constructor({
     heroBanner,
@@ -12593,24 +12583,7 @@ class Hero extends Component {
     this.heroGridWrapper = document.querySelector('.hero__grid__wrapper');
   }
 
-  create() {
-    this.images = []; // We can add listeners here
-    // this.createImages();
-  }
-
-  createImages() {// map(this.selectorChildren.heroImages, (image, i) => {
-    //   const imgRect = image.getBoundingClientRect();
-    //   const x = imgRect.x;
-    //   const y = imgRect.y;
-    //   const width = imgRect.width;
-    //   const height = imgRect.height;
-    //   const bounds = this.galleryBounds;
-    //   const img = new Image({ image, x, y, width, height, bounds, i });
-    //   this.images.push(img);
-    // });
-    // console.log(this.images);
-    // map(this.images, (image) => image.create());
-  }
+  create() {}
 
   showHero(isMobile) {
     return new Promise(resolve => {
@@ -12625,7 +12598,7 @@ class Hero extends Component {
           duration: 2.2,
           delay: i * 0.15,
           ease: 'expo.out'
-        }, 1);
+        }, 0);
       });
 
       if (!isMobile) {
@@ -12652,14 +12625,7 @@ class Hero extends Component {
         resolve();
       });
     });
-  } // onResize(e) {
-  //   this.galleryBounds = this.heroGridWrapper.getBoundingClientRect();
-  //   this.gallerySizes = {
-  //     height: this.galleryBounds.height / window.innerHeight,
-  //     width: this.galleryBounds.width / window.innerWidth,
-  //   };
-  // }
-
+  }
 
   addEventListeners() {}
 
@@ -12669,7 +12635,6 @@ class Hero extends Component {
 
 }
 ;// CONCATENATED MODULE: ./app/pages/Home/index.js
-
 
 
 
@@ -12756,7 +12721,7 @@ class App {
     this.createPages();
     this.update();
     this.onResize();
-    this.onWheel(); // this.addEventListeners();
+    this.onWheel();
   }
 
   checkMedia() {
@@ -12795,7 +12760,7 @@ class App {
 
   onWheel(event) {
     if (this.page && this.page.onWheel && !this.media.matches) {
-      this.page.onWheel(event); // this.page.onWheel(normalizedWheel);
+      this.page.onWheel(event);
     }
   }
 
@@ -12845,7 +12810,8 @@ class App {
   }
 
   addEventListeners() {
-    window.addEventListener('mousewheel', this.onWheel.bind(this)); // window.addEventListener('popstate', this.onPopState.bind(this));
+    window.addEventListener('mousewheel', this.onWheel.bind(this)); // popstate for routing
+    // window.addEventListener('popstate', this.onPopState.bind(this));
 
     window.addEventListener('resize', this.onResize.bind(this));
   }

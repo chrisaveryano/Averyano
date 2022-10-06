@@ -1,3 +1,5 @@
+// Experimenting with it. Not in the production.
+
 export default class Image {
   constructor({ image, x, y, width, height, maxY, i }) {
     this.element = image.parentElement;

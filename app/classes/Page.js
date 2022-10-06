@@ -8,6 +8,7 @@ import map from 'lodash/map';
 
 import Paragraph from '../animations/Paragraph';
 import FadeIn from '../animations/FadeIn';
+import NavBg from '../animations/NavBg';
 
 export default class Page {
   constructor({ element, elements, id }) {
@@ -20,13 +21,15 @@ export default class Page {
       animationsFloating: '[data-animation="floating"]',
 
       animationsNav: '.navigation',
-      animationsNavTrigger: '.home__gallery',
+      animationsNavTrigger: '.home__hero',
 
       preloaders: '[data-src]',
     };
 
     this.id = id;
     this.transformPrefix = Prefix('transform');
+
+    this.navActive = false;
 
     this.scroll = {
       current: 0,
@@ -107,7 +110,7 @@ export default class Page {
       last: 0,
       limit: 1000,
     };
-    // we use lodash to forEach through Object {}
+
     each(this.selectorChildren, (entry, key) => {
       if (
         entry instanceof window.HTMLElement ||
@@ -129,7 +132,6 @@ export default class Page {
     });
 
     this.createAnimations();
-    // this.createPreloader();
   }
 
   checkMedia() {
@@ -147,11 +149,6 @@ export default class Page {
     }
   }
   createAnimations() {
-    // this.animations = [];
-    // this.animationsTitles = map(this.elements.animationsTitles, (element) => {
-    //   return new Title(element);
-    // });
-
     this.animationsParagraphs = map(
       this.elements.animationsParagraphs,
       (element) => {
@@ -159,7 +156,6 @@ export default class Page {
       }
     );
 
-    // If it's a single element
     if (!this.elements.animationsFade.length) {
       this.animationsFade = new FadeIn(this.elements.animationsFade);
     } else {
@@ -168,14 +164,8 @@ export default class Page {
       });
     }
 
-    // @todo - show background below navigation
-    // this.navigation = new Navigation();
+    this.animationsNav = new NavBg(this.elements.animationsNavTrigger);
   }
-  // createPreloader() {
-  //   this.preloaders = map(this.elements.preloaders, (element) => {
-  //     return new AsyncLoad(element);
-  //   });
-  // }
 
   hide() {
     return new Promise((resolve) => {
@@ -189,6 +179,7 @@ export default class Page {
       });
     });
   }
+
   // Events
   onWheel(event) {
     if (!event) return;
@@ -205,13 +196,13 @@ export default class Page {
     }
 
     if (this.element && this.element.classList.contains('home')) {
-      // Resizing homepage
+      // Resizing homepage, if it's mobile device we set the Height to match mobile viewport
       if (this.media.matches) {
         this.mediaHeight.current = window.innerHeight;
+
         if (this.mediaHeight.previous === 0) {
           this.mediaHeight.previous = window.innerHeight;
         }
-        // Change hero section height to match mobile height (including browser UI)
 
         if (this.mediaHeight.current === this.mediaHeight.previous) {
           document.querySelector(
@@ -219,6 +210,7 @@ export default class Page {
           ).style.height = `${this.mediaHeight.current}px`;
         } else {
           const percent = this.mediaHeight.current / this.mediaHeight.previous;
+
           // if the difference is 20% change height
           if (percent <= 0.8 || percent >= 1.2) {
             this.mediaHeight.previous = window.innerHeight;
@@ -250,8 +242,6 @@ export default class Page {
 
       this.isResizing = false;
     }
-
-    // each(this.animationsTitles, (animation) => animation.onResize());
   }
 
   // Loop
@@ -303,8 +293,6 @@ export default class Page {
   removeEventListeners() {
     // window.removeEventListener('mousewheel', this.onWheelEvent);
   }
-
-  // .home__hero__left
 
   show(animation) {
     return new Promise((resolve) => {

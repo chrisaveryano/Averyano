@@ -10,8 +10,6 @@ export default class Paragraph extends Animation {
     });
   }
 
-  // @todo - implement same animation for subtitle and paragraph
-
   animateIn() {
     if (this.isAnimatedIn) return;
 
@@ -33,7 +31,6 @@ export default class Paragraph extends Animation {
             y: '100%',
           },
           {
-            // delay: 1 * 0.2,
             autoAlpha: 1,
             duration: 1.5,
             ease: 'expo.out',
@@ -54,7 +51,6 @@ export default class Paragraph extends Animation {
             x: '-100%',
           },
           {
-            // delay: 1 * 0.2,
             autoAlpha: 1,
             duration: 1.5,
             ease: 'expo.out',
@@ -67,29 +63,6 @@ export default class Paragraph extends Animation {
         );
       }
     });
-
-    // this.element.childNodes.forEach((el, i) => {
-    //   console.log(el);
-    //   this.timelineIn.fromTo(
-    //     el,
-    //     {
-    //       autoAlpha: 0,
-    //       y: '100%',
-    //     },
-    //     {
-    //       autoAlpha: 1,
-    //       delay: i * 0.2,
-    //       duration: 1.5,
-    //       ease: 'expo.out',
-    //       stagger: {
-    //         amount: 0.5,
-    //         axis: 'y',
-    //       },
-    //       y: '0%',
-    //     },
-    //     0
-    //   );
-    // });
   }
 
   animateOut() {
@@ -105,7 +78,6 @@ export default class Paragraph extends Animation {
             y: '100%',
           },
           {
-            // delay: 1 * 0.2,
             autoAlpha: 0,
             duration: 0,
             ease: 'expo.out',
@@ -114,12 +86,5 @@ export default class Paragraph extends Animation {
         );
       }
     });
-    // GSAP.set(this.element.childNodes, { duration: 0, autoAlpha: 0 });
-    // this.element.childNodes.forEach((el) => {
-    //   GSAP.set(el, {
-    //     duration: 0,
-    //     autoAlpha: 0,
-    //   });
-    // });
   }
 }

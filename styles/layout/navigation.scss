@@ -50,7 +50,11 @@
 }
 .navigation__list__item {
   pointer-events: auto;
-  height: inherit;
+  height: fit-content;
+
+  &--logo {
+    height: inherit;
+  }
   &:first-child {
     @extend %title-24;
     font-weight: 900;

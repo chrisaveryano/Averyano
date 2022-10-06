@@ -2,8 +2,6 @@ import Page from 'classes/Page';
 import Contact from './sections/Contact';
 import Hero from './sections/Hero';
 
-import each from 'lodash/each';
-
 import GSAP from 'gsap';
 
 export default class Home extends Page {

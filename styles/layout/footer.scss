@@ -8,15 +8,16 @@
 }
 
 .footer__left {
-  @extend %description-16;
+  @extend %description-12;
 
   flex-grow: 1;
-  padding-bottom: 3.2rem;
+
+  padding-bottom: 2.4rem;
   padding-left: 6.4rem;
 
   @include media('<phone') {
     padding-left: 1.25rem;
-    padding-bottom: 7.5rem;
+    padding-bottom: 4.7rem;
     font-size: 110%;
   }
 }
@@ -34,6 +35,9 @@
 }
 
 .footer__right__links__menu {
+  @extend %center;
+
+  height: 100%;
   padding: 4.7rem 5.8rem;
 
   @include media('<phone') {
@@ -53,9 +57,9 @@
   background-image: linear-gradient(
     to bottom,
     transparent,
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 1),
-    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 1.15),
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 1.15),
     transparent
   );
 
@@ -66,7 +70,10 @@
 }
 
 .footer__right__socials__menu {
-  padding: 4.7rem 5.8rem;
+  @extend %center;
+
+  height: 100%;
+  padding: 2.4rem 5rem;
 
   @include media('<phone') {
     padding: 4.7rem 3.8rem;
@@ -92,10 +99,7 @@
     }
   }
 }
-.footer__list__item .footer__list__link {
-  @extend %link--hidden;
-  min-height: 4.2rem;
-}
+
 .footer__list__item--socials .footer__list__link img {
   padding-right: 0.8rem;
   margin-bottom: -0.25rem;
@@ -108,7 +112,8 @@
 }
 
 .footer__list__item--socials .footer__list__link {
-  font-size: 80%;
+  @extend %description-12;
+
   display: flex;
   justify-content: flex-start;
 }

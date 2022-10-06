@@ -31,8 +31,6 @@ class App {
 
     this.onResize();
     this.onWheel();
-
-    // this.addEventListeners();
   }
 
   checkMedia() {
@@ -64,6 +62,7 @@ class App {
   createNavigation() {
     this.navigation = new Navigation();
   }
+
   /***
    * Events.
    * **/
@@ -71,7 +70,6 @@ class App {
   onWheel(event) {
     if (this.page && this.page.onWheel && !this.media.matches) {
       this.page.onWheel(event);
-      // this.page.onWheel(normalizedWheel);
     }
   }
 
@@ -103,9 +101,11 @@ class App {
       this.page.onResize(e);
     }
   }
+
   /***
    * Loop.
    * **/
+
   update() {
     if (this.page && this.page.update) {
       this.page.update();
@@ -121,6 +121,7 @@ class App {
   addEventListeners() {
     window.addEventListener('mousewheel', this.onWheel.bind(this));
 
+    // popstate for routing
     // window.addEventListener('popstate', this.onPopState.bind(this));
     window.addEventListener('resize', this.onResize.bind(this));
   }

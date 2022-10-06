@@ -10,8 +10,6 @@ export default class FadeIn extends Animation {
     });
   }
 
-  // @todo - implement same animation for subtitle and paragraph
-
   animateIn() {
     if (this.isAnimatedIn) return;
 
@@ -32,7 +30,6 @@ export default class FadeIn extends Animation {
             autoAlpha: 0,
           },
           {
-            // delay: 1 * 0.2,
             autoAlpha: 1,
             duration: 1.5,
             ease: 'expo.out',
@@ -54,18 +51,10 @@ export default class FadeIn extends Animation {
             autoAlpha: 1,
           },
           {
-            // delay: 1 * 0.2,
             autoAlpha: 0,
           }
         );
       }
     });
-    // GSAP.set(this.element.childNodes, { duration: 0, autoAlpha: 0 });
-    // this.element.childNodes.forEach((el) => {
-    //   GSAP.set(el, {
-    //     duration: 0,
-    //     autoAlpha: 0,
-    //   });
-    // });
   }
 }
