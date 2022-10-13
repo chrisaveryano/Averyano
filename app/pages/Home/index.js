@@ -34,17 +34,19 @@ export default class Home extends Page {
     this.createHero();
   }
 
+  createHero() {
+    this.hero = new Hero();
+  }
   createContact() {
     this.contact = new Contact();
   }
 
-  createHero() {
-    this.hero = new Hero({
-      heroBanner: this.elements.heroBanner,
-      heroImages: this.elements.heroImages,
-    });
+  onResize() {
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize();
+    }
+    super.onResize();
   }
-
   showHero(isMobile) {
     if (this.hero && this.hero.showHero) {
       this.hero.showHero(isMobile);

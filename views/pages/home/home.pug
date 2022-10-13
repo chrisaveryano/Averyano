@@ -10,14 +10,17 @@ block content
 				.main-bg-noise
 				.home__hero__wrapper 
 					.home__hero__left
+						.hero__switch__container
+							input.hero__switch(type="checkbox" id="switch" data-background="1,1,1" data-color="245, 239, 225" data-transparent="1,1,1,0.9")
+						.home__hero__left__hide
+							img.home__hero__hide__arrow(data-src="./images/hero/arrowl.png")
 						.home__hero__left__content 
 							h1.home__hero__title.anim__fade(data-animation="fade")='Averyano'
-							p.home__hero__description.anim__paragraph--left(data-animation="paragraph")='Averyano Design is a forward-thinking web design studio made by creatives. Averyano specializes on portfolio sites, business presentation sites, and E-commerce.'
+							p.home__hero__description.anim__paragraph--left(data-animation="paragraph")='Averyano is an expert in crafting websites that drive results, tailored to your business and project needs. '
 							p.home__hero__description.anim__paragraph--left(data-animation="paragraph")!=`Bring your ideas at <a class="home__hero__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a> and let's get started.`
-					.home__hero__right 
-				.hero__grid 
-					include ./hero_grid
-					include ./hero_grid
+				.hero__gallery
+					include ./hero_gallery
+					//- include ./hero_grid
 			.home__gallery(id="projects")
 					h2.home__gallery__title.anim__fade(data-animation="fade")='Projects'
 					.home__gallery__wrapper 

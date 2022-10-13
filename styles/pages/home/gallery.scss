@@ -25,7 +25,6 @@
   grid-gap: 3rem;
   padding: 3rem;
   margin-bottom: 10rem;
-  margin-top: -7rem;
 
   @include media('<phone') {
     grid-template-columns: 100%;

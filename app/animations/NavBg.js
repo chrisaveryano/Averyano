@@ -26,9 +26,11 @@ export default class NavBg extends Animation {
     GSAP.fromTo(
       '.navigation__wrapper',
       {
+        y: '0%',
         backgroundColor: `rgba(3, 3, 3, 0.2)`,
       },
       {
+        y: '-100%',
         backgroundColor: `rgba(3, 3, 3, 0)`,
         duration: 1,
         ease: 'expo.out',
@@ -39,13 +41,14 @@ export default class NavBg extends Animation {
   animateOut() {
     if (this.isAnimatedIn) return;
 
-    // convert HTMLCollection into an array
     GSAP.fromTo(
       '.navigation__wrapper',
       {
+        y: '-100%',
         backgroundColor: `rgba(3, 3, 3, 0)`,
       },
       {
+        y: '0%',
         backgroundColor: `rgba(3, 3, 3, 0.2)`,
         duration: 1,
         ease: 'expo.out',

@@ -3,7 +3,7 @@ import NormalizeWheel from 'normalize-wheel';
 import Preloader from './components/Preloader';
 import Video from './components/Video';
 import Navigation from './components/Navigation';
-
+import Gallery from './components/Gallery';
 import Home from './pages/Home';
 
 class App {
@@ -23,7 +23,7 @@ class App {
     this.createPreloader();
     this.createVideo();
 
-    this.createNavigation();
+    // this.createNavigation();
 
     this.createPages();
 
@@ -31,6 +31,10 @@ class App {
 
     this.onResize();
     this.onWheel();
+
+    this.onTouchDown();
+    this.onTouchUp();
+    this.onTouchMove();
   }
 
   checkMedia() {
@@ -76,10 +80,11 @@ class App {
   onPreloaded() {
     this.preloader.destroy();
     this.onResize();
+    this.addEventListeners();
 
     if (this.page && this.page.show) {
       this.page.show();
-
+      this.gallery = new Gallery(this.template);
       // homepage hero
       if (this.template === 'home') {
         const media = window.matchMedia('(max-width: 768px)');
@@ -91,9 +96,24 @@ class App {
     if (this.navigation && this.navigation.show) {
       this.navigation.show();
     }
-    this.addEventListeners();
+  }
+  onTouchDown(e) {
+    if (this.gallery && this.gallery.onTouchDown) {
+      this.gallery.onTouchDown(e);
+    }
   }
 
+  onTouchMove(e) {
+    if (this.gallery && this.gallery.onTouchMove) {
+      this.gallery.onTouchMove(e);
+    }
+  }
+
+  onTouchUp(e) {
+    if (this.gallery && this.gallery.onTouchUp) {
+      this.gallery.onTouchUp(e);
+    }
+  }
   onResize(e) {
     this.checkMedia();
 
@@ -111,6 +131,10 @@ class App {
       this.page.update();
     }
 
+    if (this.gallery && this.gallery.update) {
+      this.gallery.update();
+    }
+
     if (this.video && this.video.update) {
       this.video.update();
     }
@@ -120,6 +144,14 @@ class App {
 
   addEventListeners() {
     window.addEventListener('mousewheel', this.onWheel.bind(this));
+
+    window.addEventListener('mousedown', this.onTouchDown.bind(this));
+    window.addEventListener('mousemove', this.onTouchMove.bind(this));
+    window.addEventListener('mouseup', this.onTouchUp.bind(this));
+
+    window.addEventListener('touchstart', this.onTouchDown.bind(this));
+    window.addEventListener('touchmove', this.onTouchMove.bind(this));
+    window.addEventListener('touchend', this.onTouchUp.bind(this));
 
     // popstate for routing
     // window.addEventListener('popstate', this.onPopState.bind(this));

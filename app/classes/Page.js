@@ -242,6 +242,7 @@ export default class Page {
 
       this.isResizing = false;
     }
+    console.log(this.scroll);
   }
 
   // Loop

@@ -22,6 +22,7 @@
 
 .home__responsive__title {
   @extend %title-42;
+  text-align: center;
   padding: 2.2rem;
 }
 
@@ -31,6 +32,10 @@
 
 .home__responsive__image {
   width: inherit;
+
+  @include media('<phone') {
+    transform: translateX(5%);
+  }
 }
 .home__responsive__image figure {
   @extend %center;
