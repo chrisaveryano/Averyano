@@ -8,6 +8,6 @@ export default class Navigation {
   }
 
   show() {
-    GSAP.fromTo(this.elementWrapper, { y: '-100%' }, { y: '0%', duration: 1 });
+    GSAP.set(this.elementWrapper, { y: '0%' });
   }
 }

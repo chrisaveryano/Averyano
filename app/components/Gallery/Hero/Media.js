@@ -19,21 +19,28 @@ export default class {
     };
 
     this.create();
+    this.addEventListeners();
   }
 
   create() {
+    this.bounds = this.element.getBoundingClientRect();
+    this.defaultX = this.bounds.x;
+    this.defaultY = this.bounds.y;
     this.createBounds();
   }
 
   createBounds() {
+    this.position.x = this.defaultX;
+    this.position.y = this.defaultY;
     this.bounds = this.element.getBoundingClientRect();
-    this.position.x = this.bounds.x;
-    this.position.y = this.bounds.y;
     this.update();
   }
 
+  /**
+   * Events.
+   **/
   // Animations
-  show() {
+  show(delayTiming = this.index * 0.25) {
     GSAP.fromTo(
       this.element,
       {
@@ -42,7 +49,7 @@ export default class {
       {
         autoAlpha: 1,
         duration: 1,
-        delay: this.index * 0.25,
+        // delay: delayTiming,
       },
       1
     );
@@ -54,55 +61,49 @@ export default class {
     });
   }
 
-  /**
-   * Events.
-   */
-  loaded(figure) {
-    GSAP.fromTo(
-      this.element,
-      {
-        scale: 0,
-      },
-      { scale: 1, duration: 0.9, delay: this.index * 0.15, ease: 'expo.out' }
-    );
-
-    // this.createBounds();
-  }
   onResize(sizes, scroll) {
     this.extra = {
       x: 0,
       y: 0,
+      prevX: 0,
+      prevY: 0,
     };
 
-    // in percent I guess
-    this.sizes = sizes;
-
-    // the 1st refresh doesn't contain scroll, that's why we check if scroll exists, and if it does we pass scroll.x (and scroll.y)
-    // if (scroll) {
-    //   this.updateX(scroll && scroll.x);
-    //   this.updateY(scroll && scroll.y);
-    // }
+    // this.sizes = sizes;
+    // variables
+    this.position.x = this.defaultX;
+    this.position.y = this.defaultY;
+    // this.position.x = this.bounds.x + scroll.x + this.extra.x;
+    // this.position.y = this.bounds.y + scroll.y + this.extra.y;
   }
 
-  updateScale() {
-    // It's returning percentages
-    // this.height = this.bounds.height / window.innerHeight;
-    // this.width = this.bounds.width / window.innerWidth;
-    // this.position.x = this.sizes.width * this.width;
-    // this.position.y = this.sizes.height * this.height;
-    // on webGL x = 0 and y = 0 are the center of the screen. So to place an element at the top left, we have to divide the viewport by 2
-    // top-left position:
-    // this.mesh.position.x = -width / 2 + this.mesh.scale.x / 2;
-    // this.mesh.position.y = height / 2 - this.mesh.scale.y / 2;
-  }
+  updateScale() {}
 
+  addEventListeners() {
+    this.element.addEventListener('animationend', () => {
+      this.element.classList.remove('hero__gallery__media--anim');
+    });
+  }
   /**
    * Loop.
-   */
+   **/
   update(scroll = { x: 0, y: 0 }) {
     if (!this.bounds) return;
+
+    // fade-in fx
+    if (this.extra.prevX < this.extra.x || this.extra.prevX > this.extra.x) {
+      this.element.classList.add('hero__gallery__media--anim');
+    }
+    if (this.extra.prevY < this.extra.y || this.extra.prevY > this.extra.y) {
+      this.element.classList.add('hero__gallery__media--anim');
+    }
+
+    // position
     this.element.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
 
+    // variables
+    this.extra.prevX = this.extra.x;
+    this.extra.prevY = this.extra.y;
     this.position.x = this.bounds.x + scroll.x + this.extra.x;
     this.position.y = this.bounds.y + scroll.y + this.extra.y;
   }

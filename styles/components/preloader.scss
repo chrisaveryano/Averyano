@@ -4,8 +4,8 @@
   flex-direction: column;
   text-align: center;
   font-weight: normal;
-  background: $color-dark-night;
-  color: $color-white-night;
+  color: rgb(var(--data-color-primary));
+  background: rgb(var(--data-color-secondary));
 
   z-index: z('preloader');
   display: flex;
@@ -41,12 +41,13 @@
     border-radius: 50%;
     background: linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 1),
+      rgb(var(--data-color-primary)),
       rgba(255, 255, 255, 0),
       rgba(255, 255, 255, 0)
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(rgb(var(--data-color-primary)) 0 0)
+        content-box,
+      linear-gradient(rgb(var(--data-color-primary)) 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;

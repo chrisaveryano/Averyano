@@ -1,18 +1,23 @@
-import GSAP from 'gsap';
 import Component from '../../classes/Component';
+
 import each from 'lodash/each';
+
 import Media from './Media';
-// @todo make a separate component for each video
-// store the following data inside this component:
-// 1. progress
-// 2. associated playBtn, pauseBtn, fullBtn
-// 3. this.shouldFire for each video separately
-// I think you can keep videoWrapper component theoretically,
 
-// The problem right now is that the shouldFire is global, and also you have to calculate this videoIndex in a weird way. All these calcualtions can be ignored I think, since each video will get an index assigned on birth, so you can always refer to a particular file.
+/*
+.home__gallery__item__content
 
-// so I think you create video.js component for each video,
-// and then store them in an array at the videoWrapper.js component
+width: 100%;
+height: 100%;
+
+position: fixed;
+width: 100vw;
+height: 100vh;
+top: 0;
+left: 0;
+
+*/
+
 export default class Video extends Component {
   constructor() {
     super({
@@ -35,7 +40,6 @@ export default class Video extends Component {
   }
 
   initMedias() {
-    // Inside video container
     each(this.elements.videoWrapper, (vid, i) => {
       vid.addEventListener('click', (e) => {
         let videoContainer = e.target.closest(
@@ -96,7 +100,16 @@ export default class Video extends Component {
   }
 
   addEventListeners() {
+    // prevents spacebar scrolling
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target == document.body) {
+        e.preventDefault();
+      }
+    });
+
+    // pauses/plays last video on spacebar
     window.addEventListener('keyup', (e) => {
+      e.preventDefault();
       if (e.code === 'Space') {
         // search for a match
         each(this.elements.videoWrapper, (wrapper, i) => {

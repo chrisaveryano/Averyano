@@ -1,4 +1,5 @@
 import each from 'lodash/each';
+
 import Prefix from 'prefix';
 
 export default class {
@@ -10,6 +11,8 @@ export default class {
     pauseBtn,
     fullBtn,
   }) {
+    this.transformPrefix = Prefix('transform');
+
     this.videoElement = videoElement;
     this.videoProgress = videoProgress;
     this.videoWrapper = videoWrapper;
@@ -21,6 +24,7 @@ export default class {
     this.isPlaying = false;
     this.isTimer = false;
     this.isBlinking = false;
+    this.isFullscreen = false;
 
     this.blinkCount = 0;
 
@@ -98,7 +102,43 @@ export default class {
     }
   }
 
+  toggleNavigation() {
+    const navItems = document.querySelectorAll('.nav__js');
+    each(navItems, (item) => {
+      if (this.isFullscreen) {
+        item.classList.add('nav__js--active');
+      } else {
+        item.classList.remove('nav__js--active');
+      }
+    });
+  }
+
+  toggleFullscreen() {
+    this.isFullscreen = !this.isFullscreen;
+    this.toggleNavigation();
+
+    // when home__wrapper has translateY position 'fixed' stops following
+    const itemContent = this.videoElement.closest(
+      '.home__gallery__item__content'
+    ); // 'home__gallery__item__content';
+    const itemFigure = this.videoElement.closest('.home__gallery__item');
+
+    if (this.isFullscreen) {
+      itemContent.classList.add('home__gallery__item__content--fullscreen');
+
+      itemFigure.classList.add('dg');
+      itemFigure.classList.add('ac');
+    } else {
+      itemContent.classList.remove('home__gallery__item__content--fullscreen');
+      itemFigure.classList.remove('dg');
+      itemFigure.classList.remove('ac');
+      itemContent.style[this.transformPrefix] = `translateY(0px)`;
+    }
+  }
+
   videoClick(e, fromKey = false) {
+    if (!fromKey) e.preventDefault();
+
     let videoContainer = null;
     let videoControlsWrapper = null;
 
@@ -119,6 +159,13 @@ export default class {
       // Find .video__controls__wrapper
       if (e.target.classList.contains('video__controls__wrapper')) {
         videoControlsWrapper = e.target;
+      } else if (e.target.classList.contains('home__gallery__item__video')) {
+        each(e.target.parentElement.children, (child) => {
+          if (child.classList.contains('video__controls__wrapper')) {
+            videoControlsWrapper = child;
+            return;
+          }
+        });
       } else {
         videoControlsWrapper = e.target.closest('.video__controls__wrapper');
       }
@@ -141,15 +188,17 @@ export default class {
           !fromKey &&
           e.target.classList.contains('video__controls--fullscreen')
         ) {
-          if (child.requestFullscreen) {
-            child.requestFullscreen();
-          } else if (child.mozRequestFullScreen) {
-            child.mozRequestFullScreen();
-          } else if (child.webkitRequestFullscreen) {
-            child.webkitRequestFullscreen();
-          } else if (child.msRequestFullscreen) {
-            child.msRequestFullscreen();
-          }
+          this.toggleFullscreen();
+
+          // if (child.requestFullscreen) {
+          //   child.requestFullscreen();
+          // } else if (child.mozRequestFullScreen) {
+          //   child.mozRequestFullScreen();
+          // } else if (child.webkitRequestFullscreen) {
+          //   child.webkitRequestFullscreen();
+          // } else if (child.msRequestFullscreen) {
+          //   child.msRequestFullscreen();
+          // }
           // child.requestFullscreen();
           return;
         }
@@ -159,6 +208,7 @@ export default class {
   }
 
   addEventListeners() {
+    this.videoElement.addEventListener('click', (e) => this.videoClick(e));
     this.videoWrapper.addEventListener('click', (e) => this.videoClick(e));
 
     this.videoWrapper.addEventListener('mousemove', (e) => {

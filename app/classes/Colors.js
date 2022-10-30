@@ -1,6 +1,7 @@
 import GSAP from 'gsap';
 
 class Colors {
+  constructor() {}
   change({
     backgroundColor,
     color,
@@ -8,9 +9,19 @@ class Colors {
     brightnessOn,
     brightnessOff,
     linkColor,
+    servicesBgColor,
+    servicesElColor,
   }) {
     document.documentElement.style.setProperty('--data-color-primary', color);
     document.documentElement.style.setProperty('--data-color-link', linkColor);
+    document.documentElement.style.setProperty(
+      '--data-color-servicesel',
+      servicesElColor
+    );
+    document.documentElement.style.setProperty(
+      '--data-color-servicesbg',
+      servicesBgColor
+    );
     document.documentElement.style.setProperty(
       '--data-color-brightness-on',
       brightnessOn

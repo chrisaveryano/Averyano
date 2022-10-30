@@ -18,7 +18,6 @@ export default class Circle {
   }
 
   stopAnimating() {
-    console.log('stopAnimating');
     this.isAnimating = false;
   }
   addEventListeners() {

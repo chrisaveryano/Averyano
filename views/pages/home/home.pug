@@ -21,28 +21,18 @@ block content
 				.hero__gallery
 					include ./hero_gallery
 					//- include ./hero_grid
+
+			include ./services
+
 			.home__gallery(id="projects")
 					h2.home__gallery__title.anim__fade(data-animation="fade")='Projects'
 					.home__gallery__wrapper 
 						include ./gallery
 
-			.home__responsive 
-				.home__responsive__wrapper 
-					h2.home__responsive__title.anim__fade(data-animation="fade")='Responsive Design'
-					.home__responsive__images 
-						figure.home__responsive__image 
-							img(data-src="./images/devices.png" alt="")
-						//- figure.home__responsive__image 
-						//- 	img(src="./images/macbook.png" alt="")
-						//- figure.home__responsive__image 
-						//- 	img(src="./images/tablet.png" alt="" style="transform: rotate(270deg)")
-						//- figure.home__responsive__image 
-						//- 	img(src="./images/phone.png" alt="" style="max-width: 40%")
-					p.home__responsive__description.anim__paragraph(data-animation="paragraph")='Responsive design is based on the understanding of different devices and web modules. A proper CSS code is used. The website will be tested using a variety of different real devices: iPhone X, iPhone 12, iPad 2022, iPad4, MacBook Pro (14-16”), Galaxy A80, Xiaomi Redmi Note and others to ensure that your site is perfect everywhere!'
 			.home__contact(id="contact")
 				.home__contact__wrapper 
 					a.home__contact__button(href="#")
 					a(href="#")
-						h2.home__contact__button__text.anim__fade(data-animation="fade")='Start New Project'
+						h2.home__contact__button__text.anim__fade(data-animation="fade")!='Contact Me'
 			include ../../partials/footer
 			

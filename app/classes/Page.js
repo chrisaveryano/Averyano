@@ -10,6 +10,8 @@ import Paragraph from '../animations/Paragraph';
 import FadeIn from '../animations/FadeIn';
 import NavBg from '../animations/NavBg';
 
+import Services from '../pages/Home/sections/Services';
+
 export default class Page {
   constructor({ element, elements, id }) {
     this.selector = element;
@@ -60,46 +62,6 @@ export default class Page {
     this.onWheelEvent = this.onWheel.bind(this);
   }
 
-  createNavigation() {
-    const activateLink = (selector) => {
-      each(selector, (link) => {
-        const href = link.href;
-        const linkNaming = href.split('#')[1];
-
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const target = document.getElementById(`${linkNaming}`);
-
-          if (this.mediaMobile) {
-            const posY = target.getBoundingClientRect().y + window.pageYOffset;
-            window.scrollTo({
-              top: posY,
-              behavior: 'smooth',
-            });
-          } else {
-            this.scroll.target += target.getBoundingClientRect().y;
-          }
-        });
-      });
-    };
-
-    activateLink(this.selectorChildren.footerLinks);
-    activateLink(this.selectorChildren.navigationLinks);
-
-    // logo
-    this.selectorChildren.navigationLogo.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (this.mediaMobile) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-      } else {
-        this.scroll.target = 0;
-      }
-    });
-  }
-
   create() {
     this.element = document.querySelector(this.selector);
     this.elements = {};
@@ -134,20 +96,65 @@ export default class Page {
     this.createAnimations();
   }
 
-  checkMedia() {
-    if (this.media.matches && !this.mediaMobile) {
-      // mobile
-      window.scrollTo(0, 0);
-      this.mediaMobile = true;
-    }
+  // called from Home.js after the create methods
+  createNavigation() {
+    const activateLink = (selector) => {
+      each(selector, (link) => {
+        const href = link.href;
+        const linkNaming = href.split('#')[1];
 
-    if (!this.media.matches && this.mediaMobile) {
-      // desktop
-      this.mediaMobile = false;
-      this.scroll.target = 0;
-      window.scrollTo(0, 0);
-    }
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById(`${linkNaming}`);
+
+          if (this.mediaMobile) {
+            const posY = target.getBoundingClientRect().y + window.pageYOffset;
+            this.scroll = {
+              current: 0,
+              target: 0,
+              last: 0,
+              limit: 1000,
+            };
+
+            window.scrollTo({
+              top: posY,
+              behavior: 'smooth',
+            });
+          } else {
+            this.scroll.target += target.getBoundingClientRect().y;
+          }
+        });
+      });
+    };
+
+    activateLink(this.selectorChildren.footerLinks);
+    activateLink(this.selectorChildren.navigationLinks);
+
+    // logo
+    this.selectorChildren.navigationLogo.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (this.mediaMobile) {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+      } else {
+        this.scroll.target = 0;
+      }
+    });
   }
+
+  // called from Home.js after the create methods
+  createServices() {
+    this.services = new Services();
+  }
+
+  /*
+   **  ------
+   **  ANIMATIONS
+   **  ------
+   */
+
   createAnimations() {
     this.animationsParagraphs = map(
       this.elements.animationsParagraphs,
@@ -165,134 +172,6 @@ export default class Page {
     }
 
     this.animationsNav = new NavBg(this.elements.animationsNavTrigger);
-  }
-
-  hide() {
-    return new Promise((resolve) => {
-      this.destroy();
-      this.removeEventListeners();
-
-      this.animationOut = GSAP.timeline();
-      this.animationOut.to(this.element, {
-        autoAlpha: 0,
-        onComplete: resolve,
-      });
-    });
-  }
-
-  // Events
-  onWheel(event) {
-    if (!event) return;
-
-    const { pixelY } = NormalizeWheel(event);
-    this.scroll.target += pixelY;
-  }
-
-  onResize(e) {
-    this.isResizing = true;
-
-    if (this.hero && this.hero.onResize) {
-      this.hero.onResize(e);
-    }
-
-    if (this.element && this.element.classList.contains('home')) {
-      // Resizing homepage, if it's mobile device we set the Height to match mobile viewport
-      if (this.media.matches) {
-        this.mediaHeight.current = window.innerHeight;
-
-        if (this.mediaHeight.previous === 0) {
-          this.mediaHeight.previous = window.innerHeight;
-        }
-
-        if (this.mediaHeight.current === this.mediaHeight.previous) {
-          document.querySelector(
-            '.home__hero'
-          ).style.height = `${this.mediaHeight.current}px`;
-        } else {
-          const percent = this.mediaHeight.current / this.mediaHeight.previous;
-
-          // if the difference is 20% change height
-          if (percent <= 0.8 || percent >= 1.2) {
-            this.mediaHeight.previous = window.innerHeight;
-            document.querySelector(
-              '.home__hero'
-            ).style.height = `${this.mediaHeight.previous}px`;
-          }
-        }
-      } else {
-        document.querySelector('.home__hero').style.height = `100vh`;
-      }
-    }
-
-    if (this.elements.wrapper) {
-      this.scroll.limit =
-        this.elements.wrapper.clientHeight - window.innerHeight;
-
-      // sets target scroll based on scroll %%
-      // prettier-ignore
-      const diff = this.scroll.limit - (this.scroll.limit - (this.scroll.limit * this.scroll.percent) / 100);
-      if (diff) this.scroll.target = diff;
-      else this.scroll.target = 0;
-
-      this.checkMedia();
-
-      if (this.mediaMobile) {
-        this.scroll.target = 0;
-      }
-
-      this.isResizing = false;
-    }
-    console.log(this.scroll);
-  }
-
-  // Loop
-  update() {
-    if (!this.scroll) return;
-
-    this.scroll.target = GSAP.utils.clamp(
-      0,
-      this.scroll.limit,
-      this.scroll.target
-    );
-
-    this.scroll.current = GSAP.utils.interpolate(
-      this.scroll.current,
-      this.scroll.target,
-      0.1
-    );
-
-    if (this.scroll.current < 0.01) {
-      this.scroll.current = 0;
-    }
-
-    this.scroll.last = this.scroll.current.toFixed();
-
-    // Update translateY only if the movement is actually made
-    if (this.scroll.current.toFixed() != this.scroll.target) {
-      if (this.elements.wrapper) {
-        this.elements.wrapper.style[
-          this.transformPrefix
-        ] = `translateY(-${this.scroll.current.toFixed()}px)`;
-      }
-
-      if (this.elements.scrollbar && !this.isResizing) {
-        this.scroll.percent = (this.scroll.current / this.scroll.limit) * 100;
-
-        // round
-        if (this.scroll.percent < 0.1) this.scroll.percent = 0;
-        if (this.scroll.percent > 99.7) this.scroll.percent = 100;
-
-        this.elements.scrollbar.style[
-          this.transformPrefix
-        ] = `translateY(${this.scroll.percent}%)`;
-      }
-    }
-  }
-
-  addEventListeners() {}
-
-  removeEventListeners() {
-    // window.removeEventListener('mousewheel', this.onWheelEvent);
   }
 
   show(animation) {
@@ -333,6 +212,196 @@ export default class Page {
       });
     });
   }
+
+  /*
+   **  ------
+   **  EVENTS
+   **  ------
+   */
+
+  checkMedia() {
+    if (window.matchMedia('(max-width: 1024px)').matches && !this.mediaMobile) {
+      // mobile
+      window.scrollTo(0, this.scroll.current);
+      this.scroll.target = 0;
+      this.scroll.current = 0;
+      this.mediaMobile = true;
+      this.elements.wrapper.style[this.transformPrefix] = `translateY(0px)`;
+    }
+
+    if (!window.matchMedia('(max-width: 1024px)').matches && this.mediaMobile) {
+      // desktop
+      this.mediaMobile = false;
+      this.scroll.current = window.pageYOffset;
+      this.scroll.target = window.pageYOffset;
+      this.elements.wrapper.style[
+        this.transformPrefix
+      ] = `translateY(-${this.scroll.current}px)`;
+
+      window.scrollTo(0, 0);
+    }
+  }
+
+  onWheel(event) {
+    if (!event) return;
+
+    const { pixelY } = NormalizeWheel(event);
+    this.scroll.target += pixelY;
+  }
+
+  onResize(e) {
+    this.isResizing = true;
+
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize(e);
+    }
+
+    if (this.elements.wrapper) {
+      this.scroll.limit =
+        this.elements.wrapper.clientHeight - window.innerHeight;
+
+      // sets target scroll based on scroll %%
+      // prettier-ignore
+      const diff = this.scroll.limit - (this.scroll.limit - (this.scroll.limit * this.scroll.percent) / 100);
+      if (diff) this.scroll.target = diff;
+      // else this.scroll.target = 0;
+
+      this.checkMedia();
+
+      this.isResizing = false;
+    }
+
+    if (this.services && this.services.onResize) {
+      this.services.onResize(this.scroll.current);
+    }
+
+    if (this.element && this.element.classList.contains('home')) {
+      // if it's mobile device we set the Height to match mobile viewport, else 100vh
+      if (!this.media.matches) {
+        document.querySelector('.home__hero').style.height = `100vh`;
+        return;
+      }
+
+      this.mediaHeight.current = window.innerHeight;
+
+      if (this.mediaHeight.previous === 0) {
+        this.mediaHeight.previous = window.innerHeight;
+      }
+
+      if (this.mediaHeight.current === this.mediaHeight.previous) {
+        document.querySelector(
+          '.home__hero'
+        ).style.height = `${this.mediaHeight.current}px`;
+      } else {
+        const percent = this.mediaHeight.current / this.mediaHeight.previous;
+
+        // if the difference is 20% change height
+        if (percent <= 0.8 || percent >= 1.2) {
+          this.mediaHeight.previous = window.innerHeight;
+          document.querySelector(
+            '.home__hero'
+          ).style.height = `${this.mediaHeight.previous}px`;
+        }
+      }
+    }
+  }
+
+  /*
+   **  ------
+   **   LOOP
+   **  ------
+   */
+
+  update() {
+    if (!this.scroll || this.mediaMobile) return;
+
+    this.scroll.target = GSAP.utils.clamp(
+      0,
+      this.scroll.limit,
+      this.scroll.target
+    );
+
+    this.scroll.current = GSAP.utils.interpolate(
+      this.scroll.current,
+      this.scroll.target,
+      0.1
+    );
+
+    if (this.scroll.current < 0.01) {
+      this.scroll.current = 0;
+    }
+
+    this.scroll.last = this.scroll.current.toFixed();
+
+    // Update translateY only if the movement is actually made
+    if (this.scroll.current.toFixed() != this.scroll.target) {
+      if (this.elements.wrapper) {
+        this.elements.wrapper.style[
+          this.transformPrefix
+        ] = `translateY(-${this.scroll.current.toFixed()}px)`;
+      }
+
+      if (this.elements.scrollbar && !this.isResizing) {
+        this.scroll.percent = (this.scroll.current / this.scroll.limit) * 100;
+
+        // round
+        if (this.scroll.percent < 0.1) this.scroll.percent = 0;
+        if (this.scroll.percent > 99.7) this.scroll.percent = 100;
+
+        this.elements.scrollbar.style[
+          this.transformPrefix
+        ] = `translateY(${this.scroll.percent}%)`;
+      }
+    }
+
+    const playingVid = document.querySelector(
+      '.home__gallery__item__content--fullscreen'
+    );
+
+    if (playingVid && !this.isResizing) {
+      playingVid.style[
+        this.transformPrefix
+      ] = `translateY(${this.scroll.current.toFixed()}px)`;
+    }
+  }
+
+  /*
+   **  ------
+   **  LISTENERS
+   **  ------
+   */
+
+  addEventListeners() {
+    // const allServicesCards = document.querySelectorAll('.services__card');
+    // const allServices = document.querySelectorAll('.services__card__content');
+
+    // each(allServicesCards, (card) => {
+    //   card.addEventListener('mousemove', (e) => {
+    //     console.log(e.target);
+    //   });
+    // });
+    // add both to array affect element with the same [i] on hover
+
+    document
+      .querySelector('.home__services__wrapper')
+      .addEventListener('mousemove', (e) => {
+        const mousePos = {
+          clientX: e.clientX,
+          clientY: e.clientY,
+        };
+        this.services.update(mousePos, this.scroll.current);
+      });
+  }
+
+  removeEventListeners() {
+    // window.removeEventListener('mousewheel', this.onWheelEvent);
+  }
+
+  /*
+   **  ------
+   **  DESTROY
+   **  ------
+   */
 
   destroy() {
     this.removeEventListeners();

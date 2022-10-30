@@ -8,8 +8,8 @@ export default class NavBg extends Animation {
       element,
       elements,
     });
-
-    this.navWrapper = '.navigation__wrapper';
+    this.firstLoad = true;
+    this.navWrapper = document.querySelector('.navigation__wrapper');
   }
 
   animateIn() {

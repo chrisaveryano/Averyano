@@ -4,7 +4,7 @@
 
   display: block;
   position: relative;
-  overflow: hidden;
+  // overflow: hidden;
 }
 .home__hero__wrapper {
   width: 40%;
@@ -20,7 +20,7 @@
   background: rgb(1, 1, 1, 0.25);
   @include media('<phone') {
     width: 100%;
-    height: fit-content;
+    height: 100%;
     bottom: 0;
     flex-direction: column-reverse;
   }
@@ -34,10 +34,9 @@
   background: rgb(1, 1, 1);
   background: rgb(var(--data-color-transparent));
   backdrop-filter: blur(40px) saturate(1.5);
+  -webkit-backdrop-filter: blur(40px) saturate(1.5);
 
   @include media('<phone') {
-    width: fit-content;
-    height: fit-content;
     padding: 5rem 0;
   }
 }
@@ -269,21 +268,21 @@
 }
 
 .hero__tonys-pink {
-  // background: $color-tonys-pink;
+  background: $color-tonys-pink;
 }
 .hero__goldenrod {
-  // background: $color-goldenrod;
+  background: $color-goldenrod;
 }
 
 .hero__biloba-flower {
-  // background: $color-biloba-flower;
+  background: $color-biloba-flower;
 }
 .hero__lochmara {
-  // background: $color-lochmara;
+  background: $color-lochmara;
 }
 
 .hero__monte-carlo {
-  // background: $color-monte-carlo;
+  background: $color-monte-carlo;
 }
 
 @keyframes heromoves {
@@ -305,7 +304,7 @@
   appearance: none;
   width: 60px;
   height: 30px;
-  border: 2px rgb(var(--data-color-primary)) solid;
+  border: 2px #fff solid;
   border-radius: 25px;
   transition: background 0.6s;
   cursor: pointer;
@@ -318,7 +317,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: rgb(var(--data-color-primary));
+  background-color: #fff;
   display: block;
   position: absolute;
   top: 50%;
@@ -337,24 +336,38 @@
 
 .hero__gallery {
   @extend %cover;
+
+  margin: auto;
   visibility: visible;
+  will-change: contents;
   cursor: grab;
+  width: 2415.8px + calc(14.03 * 5);
+  height: 2213.7px + calc(14.03 * 4);
+
   &:active {
     cursor: grabbing;
   }
-  width: 2415.8px + calc(14.03 * 5);
-  height: 2213.7px + calc(14.03 * 5);
+}
+#hero__avlogo {
+  filter: brightness(1);
+}
+.hero__gallery__media--anim {
+  animation: fadeMediaIn 0.5s linear;
+}
+@keyframes fadeMediaIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .hero__gallery__media {
-  will-change: transform;
+  // will-change: transform;
   position: absolute;
   top: 0;
   left: 0;
 
-  filter: brightness(var(--data-color-brightness-off));
-  &:hover {
-    filter: brightness(var(--data-color-brightness-on));
-  }
   $dif: 645.07px;
   &:nth-child(1) {
     width: 418.3px;
@@ -362,14 +375,18 @@
     transform: translate(0px, 14.1px); // -645.07
   }
   &:nth-child(2) {
+    // converse promo
     width: 310.2px;
     height: 310.2px;
     transform: translate(432.33px, 14.1px); // -212.67
+    background: #fff;
   }
   &:nth-child(3) {
+    // wendel beauty
     width: 634.5px;
     height: 310.2px;
     transform: translate(756.69px, 14.1px);
+    background: #fff;
     // 111.625px
   }
   &:nth-child(4) {
@@ -411,6 +428,8 @@
   }
   &:nth-child(11) {
     // Perfect element for AV logo
+    filter: none;
+    box-shadow: none;
     width: 418.3px;
     height: 418.3px;
     transform: translate(calc(1408.82px + $dif), 770.8px);
@@ -486,6 +505,8 @@
     transform: translate(calc(652.12px + $dif), 1959.9px);
   }
   &:nth-child(26) {
+    // wendel slideshow
+    background: #fff;
     width: 418.3px;
     height: 310.2px;
     transform: translate(calc(1408.82px + $dif), 1959.9px);
@@ -500,15 +521,28 @@
     height: 202.1px;
     transform: translate(calc(1084.52px + $dif), 2068px);
   }
+  // filter: brightness(var(--data-color-brightness-off));
+  // &:hover {
+  //   filter: brightness(var(--data-color-brightness-on));
+  // }
+  border-radius: 12px;
 }
 .hero__gallery__media__image {
   @extend %cover;
 
   -webkit-user-drag: none;
-  border-radius: 0.5rem;
+  border: none;
+  border-radius: inherit;
+  // box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px;
+
   opacity: 1;
   width: inherit;
   height: inherit;
+
   object-fit: cover;
   object-position: center;
+
+  &--contain {
+    object-fit: contain;
+  }
 }

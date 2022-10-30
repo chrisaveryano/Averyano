@@ -1,5 +1,8 @@
 .home__contact {
   @extend %page;
+
+  padding-top: 10rem;
+  background: rgb(var(--data-color-secondary));
 }
 
 .home__contact__wrapper {
@@ -11,6 +14,7 @@
 .home__contact__button {
   width: 40rem;
   height: 40rem;
+
   transform: translate(0, 0) rotate(254deg) scale(1);
   transition-property: transform;
   transition-duration: 1s;
@@ -24,12 +28,13 @@
     border-radius: 50%;
     background: linear-gradient(
       to bottom,
-      rgb(255, 255, 255),
-      rgba(255, 255, 255, 0.1),
-      rgba(255, 255, 255, 0)
+      rgb(var(--data-color-primary)),
+      rgba(var(--data-color-primary), 0.1),
+      rgba(var(--data-color-primary), 0)
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(rgb(var(--data-color-primary)) 0 0)
+        content-box,
+      linear-gradient(rgb(var(--data-color-primary)) 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
@@ -51,11 +56,12 @@
 
   font-weight: bolder;
   text-transform: uppercase;
-  max-width: 15.5rem;
-  position: absolute;
+
   left: 50%;
-  top: 49%;
-  transform: translate(-50%, -49%);
+  top: 50%;
+  position: absolute;
+
+  transform: translate(-50%, -50%);
   opacity: 1;
 
   &:hover {
