@@ -44,7 +44,6 @@ html(class=isDesktop ? "desktop" : isTablet ? "tablet" : isPhone ? "phone" : "" 
 	body
 		include ./partials/preloader
 		include ./partials/navigation
-		p.development__version="website in development: "
 		main.content#content(data-template='home')
 			block content
 

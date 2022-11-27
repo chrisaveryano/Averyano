@@ -119,6 +119,26 @@ export default class Video extends Component {
           }
         });
       }
+
+      if (e.code === 'Escape') {
+        // search for a match
+        each(this.elements.videoWrapper, (wrapper, i) => {
+          if (wrapper.nextSibling === this.targetMedia) {
+            // call video click on match
+            this.medias[i].toggleFullscreen('Escape');
+          }
+        });
+      }
+
+      if (e.code === 'Enter') {
+        // search for a match
+        each(this.elements.videoWrapper, (wrapper, i) => {
+          if (wrapper.nextSibling === this.targetMedia) {
+            // call video click on match
+            this.medias[i].toggleFullscreen('Enter');
+          }
+        });
+      }
     });
   }
 }

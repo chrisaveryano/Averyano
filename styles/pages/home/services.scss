@@ -62,14 +62,14 @@
 .home__services__wrapper:hover > .services__card::after {
   opacity: 1;
 }
-.services__card::before {
-  background: radial-gradient(
-    800px circle at var(--mouse-x) var(--mouse-y),
-    rgba(var(--data-color-primary), 0.06),
-    transparent 40%
-  );
-  z-index: 3;
-}
+// .services__card::before {
+//   background: radial-gradient(
+//     800px circle at var(--mouse-x) var(--mouse-y),
+//     rgba(var(--data-color-primary), 0.06),
+//     transparent 40%
+//   );
+//   z-index: 3;
+// }
 
 .services__card::after {
   background: radial-gradient(
@@ -128,10 +128,13 @@
 }
 
 .services__card__info > h3 {
-  @extend %title-24;
+  @extend %title-20;
+  font-weight: normal;
 }
 .services__card__info > p {
-  @extend %description-14;
+  @extend %description-12;
+  font-weight: 300;
+  opacity: 0.76;
   margin-top: 0.7rem;
 }
 
@@ -206,9 +209,14 @@
   }
 }
 
-.services__optimized__dev__image--off {
+.services__optimized__dev__image--offdark {
   opacity: 1;
   position: relative;
+  z-index: 1;
+}
+.services__optimized__dev__image--offlight {
+  opacity: 0;
+  position: absolute;
   z-index: 1;
 }
 

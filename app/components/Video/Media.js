@@ -113,7 +113,10 @@ export default class {
     });
   }
 
-  toggleFullscreen() {
+  toggleFullscreen(key) {
+    if (key && key === 'Escape' && !this.isFullscreen) return;
+    if (key && key === 'Enter' && this.isFullscreen) return;
+
     this.isFullscreen = !this.isFullscreen;
     this.toggleNavigation();
 
@@ -122,14 +125,16 @@ export default class {
       '.home__gallery__item__content'
     ); // 'home__gallery__item__content';
     const itemFigure = this.videoElement.closest('.home__gallery__item');
+    const itemVideo = this.videoElement.closest('.home__gallery__item__video');
 
     if (this.isFullscreen) {
       itemContent.classList.add('home__gallery__item__content--fullscreen');
-
+      itemVideo.classList.add('fullscreen');
       itemFigure.classList.add('dg');
       itemFigure.classList.add('ac');
     } else {
       itemContent.classList.remove('home__gallery__item__content--fullscreen');
+      itemVideo.classList.remove('fullscreen');
       itemFigure.classList.remove('dg');
       itemFigure.classList.remove('ac');
       itemContent.style[this.transformPrefix] = `translateY(0px)`;

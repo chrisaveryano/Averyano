@@ -1,7 +1,12 @@
-import GSAP from 'gsap';
-
 class Colors {
-  constructor() {}
+  constructor() {
+    this.monitorsDark = document.querySelectorAll(
+      '.services__optimized__dev__image--offdark'
+    );
+    this.monitorsLight = document.querySelectorAll(
+      '.services__optimized__dev__image--offlight'
+    );
+  }
   change({
     backgroundColor,
     color,
@@ -12,8 +17,17 @@ class Colors {
     servicesBgColor,
     servicesElColor,
   }) {
+    // if LightMode
+    if (color === '0,0,0') {
+      [...this.monitorsDark].map((el) => (el.style.opacity = 0));
+      [...this.monitorsLight].map((el) => (el.style.opacity = 1));
+    } else {
+      // if DarkMode
+      [...this.monitorsDark].map((el) => (el.style.opacity = 1));
+      [...this.monitorsLight].map((el) => (el.style.opacity = 0));
+    }
     document.documentElement.style.setProperty('--data-color-primary', color);
-    document.documentElement.style.setProperty('--data-color-link', linkColor);
+    // document.documentElement.style.setProperty('--data-color-link', linkColor);
     document.documentElement.style.setProperty(
       '--data-color-servicesel',
       servicesElColor
@@ -38,12 +52,6 @@ class Colors {
       '--data-color-secondary',
       backgroundColor
     );
-    // GSAP.to(document.documentElement, {
-    //   backgroundColor,
-    //   color,
-    //   duration: 1.5,
-    // });
-    // document.documentElement.style.setProperty('--your-variable', '#YOURCOLOR');
   }
 }
 

@@ -11449,9 +11449,9 @@ var each_default = /*#__PURE__*/__webpack_require__.n(lodash_each);
       x: 0,
       y: 0
     };
-    this.timer = setTimeout(() => {
-      this.startAutoPilot();
-    }, 6000);
+    this.startAutoPilot(); // this.timer = setTimeout(() => {
+    // }, 6000);
+
     this.show();
   }
 
@@ -12250,20 +12250,25 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
     });
   }
 
-  toggleFullscreen() {
+  toggleFullscreen(key) {
+    if (key && key === 'Escape' && !this.isFullscreen) return;
+    if (key && key === 'Enter' && this.isFullscreen) return;
     this.isFullscreen = !this.isFullscreen;
     this.toggleNavigation(); // when home__wrapper has translateY position 'fixed' stops following
 
     const itemContent = this.videoElement.closest('.home__gallery__item__content'); // 'home__gallery__item__content';
 
     const itemFigure = this.videoElement.closest('.home__gallery__item');
+    const itemVideo = this.videoElement.closest('.home__gallery__item__video');
 
     if (this.isFullscreen) {
       itemContent.classList.add('home__gallery__item__content--fullscreen');
+      itemVideo.classList.add('fullscreen');
       itemFigure.classList.add('dg');
       itemFigure.classList.add('ac');
     } else {
       itemContent.classList.remove('home__gallery__item__content--fullscreen');
+      itemVideo.classList.remove('fullscreen');
       itemFigure.classList.remove('dg');
       itemFigure.classList.remove('ac');
       itemContent.style[this.transformPrefix] = `translateY(0px)`;
@@ -12486,6 +12491,26 @@ class Video extends Component {
           }
         });
       }
+
+      if (e.code === 'Escape') {
+        // search for a match
+        each_default()(this.elements.videoWrapper, (wrapper, i) => {
+          if (wrapper.nextSibling === this.targetMedia) {
+            // call video click on match
+            this.medias[i].toggleFullscreen('Escape');
+          }
+        });
+      }
+
+      if (e.code === 'Enter') {
+        // search for a match
+        each_default()(this.elements.videoWrapper, (wrapper, i) => {
+          if (wrapper.nextSibling === this.targetMedia) {
+            // call video click on match
+            this.medias[i].toggleFullscreen('Enter');
+          }
+        });
+      }
     });
   }
 
@@ -12494,6 +12519,7 @@ class Video extends Component {
 var normalize_wheel = __webpack_require__(7320);
 var normalize_wheel_default = /*#__PURE__*/__webpack_require__.n(normalize_wheel);
 ;// CONCATENATED MODULE: ./app/classes/Animation.js
+
 
 class Animation_Animation extends Component {
   constructor({
@@ -12509,15 +12535,39 @@ class Animation_Animation extends Component {
   }
 
   createObserver() {
+    // Special Observer for menu links
+    if (Object.keys(this.elements).length > 0) {
+      this.observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.animateIn(entry.target);
+          } else {
+            this.animateOut(entry.target);
+          }
+        });
+      }, {
+        root: null,
+        threshold: 0.2
+      });
+      each_default()(this.elements, el => {
+        this.observer.observe(el);
+      });
+      return;
+    } // Observer for everything else
+
+
     this.observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          this.animateIn();
+          this.animateIn(entry.target);
         } else {
-          this.animateOut();
+          this.animateOut(entry.target);
         }
       });
-    });
+    }); // if (typeof this.element === 'array') {
+    //   console.log('Array');
+    // }
+
     this.observer.observe(this.element);
   }
 
@@ -12652,6 +12702,7 @@ class FadeIn extends Animation_Animation {
 }
 ;// CONCATENATED MODULE: ./app/animations/NavBg.js
 
+
  // import { calculate, split } from 'utils/text';
 
 class NavBg extends Animation_Animation {
@@ -12661,39 +12712,65 @@ class NavBg extends Animation_Animation {
       elements
     });
     this.firstLoad = true;
+    this.navList = document.querySelector('.navigation__list');
     this.navWrapper = document.querySelector('.navigation__wrapper');
   }
 
-  animateIn() {
-    if (this.isAnimatedIn) return;
+  toggleActiveMenu(target) {
+    each_default()(this.navList.children, child => {
+      child.classList.remove('active');
+    });
+    if (target.classList.contains('home__hero')) this.navList.children[0].classList.add('active');
+    if (target.classList.contains('home__services')) this.navList.children[1].classList.add('active');
+    if (target.classList.contains('home__gallery')) this.navList.children[2].classList.add('active');
+    if (target.classList.contains('home__contact')) this.navList.children[3].classList.add('active');
+  }
+
+  animateIn(target) {
+    if (this.isAnimatedIn) return; // Update Menu code:
+
+    if (target) {
+      this.toggleActiveMenu(target);
+    } //
+
+
     this.isAnimatedIn = true;
     this.timelineIn = gsapWithCSS.timeline({
       onComplete: _ => {
         this.isAnimatedIn = false;
       }
-    });
-    gsapWithCSS.fromTo('.navigation__wrapper', {
-      y: '0%',
-      backgroundColor: `rgba(3, 3, 3, 0.2)`
-    }, {
-      y: '-100%',
-      backgroundColor: `rgba(3, 3, 3, 0)`,
-      duration: 1,
-      ease: 'expo.out'
-    });
+    }); // GSAP.fromTo(
+    //   '.navigation__wrapper',
+    //   {
+    //     // y: '0%',
+    //     backgroundColor: `rgba(3, 3, 3, 0.2)`,
+    //   },
+    //   {
+    //     // y: '-100%',
+    //     backgroundColor: `rgba(3, 3, 3, 0)`,
+    //     duration: 1,
+    //     ease: 'expo.out',
+    //   }
+    // );
   }
 
-  animateOut() {
-    if (this.isAnimatedIn) return;
-    gsapWithCSS.fromTo('.navigation__wrapper', {
-      y: '-100%',
-      backgroundColor: `rgba(3, 3, 3, 0)`
-    }, {
-      y: '0%',
-      backgroundColor: `rgba(3, 3, 3, 0.2)`,
-      duration: 1,
-      ease: 'expo.out'
-    });
+  animateOut(target) {
+    if (this.isAnimatedIn) return; // if (target) {
+    //   this.toggleActiveMenu(target);
+    // }
+    // GSAP.fromTo(
+    //   '.navigation__wrapper',
+    //   {
+    //     // y: '-100%',
+    //     backgroundColor: `rgba(3, 3, 3, 0)`,
+    //   },
+    //   {
+    //     // y: '0%',
+    //     backgroundColor: `rgba(3, 3, 3, 0.2)`,
+    //     duration: 1,
+    //     ease: 'expo.out',
+    //   }
+    // );
   }
 
 }
@@ -12753,7 +12830,209 @@ class NavBg extends Animation_Animation {
   }
 
 });
+;// CONCATENATED MODULE: ./app/utils/utils.js
+// Map number x from range [a, b] to [c, d]
+const utils_map = (x, a, b, c, d) => (x - a) * (d - c) / (b - a) + c; // Linear interpolation
+
+
+const lerp = (a, b, n) => (1 - n) * a + n * b;
+
+const calcWinsize = () => {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+}; // Gets the mouse position
+
+
+const getMousePos = e => {
+  return {
+    x: e.clientX,
+    y: e.clientY
+  };
+};
+
+const distance = (x1, y1, x2, y2) => {
+  var a = x1 - x2;
+  var b = y1 - y2;
+  return Math.hypot(a, b);
+}; // Generate a random float.
+
+
+const getRandomFloat = (min, max) => (Math.random() * (max - min) + min).toFixed(2);
+
+
+;// CONCATENATED MODULE: ./app/components/StickyButton/StickyButton.js
+
+
+ // Calculate the viewport size
+
+let winsize = calcWinsize();
+window.addEventListener('resize', () => winsize = calcWinsize()); // Track the mouse position
+
+let mousepos = {
+  x: 0,
+  y: 0
+};
+window.addEventListener('mousemove', ev => mousepos = getMousePos(ev));
+class StickyButton extends events.EventEmitter {
+  constructor(el) {
+    super(); // DOM elements
+    // el: main button
+    // text: inner text element
+
+    this.scrollCurrent = 0;
+    this.DOM = {
+      el: el
+    };
+    this.DOM.text = this.DOM.el.querySelector('.button__text');
+    this.DOM.textinner = this.DOM.el.querySelector('.button__text-inner');
+    this.DOM.textIconBefore = this.DOM.el.querySelector('.button__text__icon--before');
+    this.DOM.textIconAfter = this.DOM.el.querySelector('.button__text__icon--after');
+    this.DOM.deco = this.DOM.el.querySelector('.button__deco');
+    this.DOM.filler = this.DOM.deco.querySelector('.button__deco-filler'); // amounts the button will translate/scale
+
+    this.renderedStyles = {
+      tx: {
+        previous: 0,
+        current: 0,
+        amt: 0.1
+      },
+      ty: {
+        previous: 0,
+        current: 0,
+        amt: 0.1
+      },
+      scale: {
+        previous: 1,
+        current: 1,
+        amt: 0.2
+      }
+    }; // button state (hover)
+
+    this.state = {
+      hover: false
+    }; // calculate size/position
+
+    this.calculateSizePosition(); // init events
+
+    this.initEvents(); // loop fn
+
+    requestAnimationFrame(() => this.render());
+  }
+
+  calculateSizePosition() {
+    // size/position
+    this.rect = this.DOM.el.getBoundingClientRect(); // the movement will take place when the distance from the mouse to the center of the button is lower than this value
+
+    this.distanceToTrigger = this.rect.width * 1.5;
+  }
+
+  initEvents() {
+    this.onResize = () => this.calculateSizePosition();
+
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+  }
+
+  update({
+    current
+  }) {
+    this.scrollCurrent = current;
+  }
+
+  render() {
+    // calculate the distance from the mouse to the center of the button
+    const distanceMouseButton = distance(mousepos.x + window.scrollX, mousepos.y + this.scrollCurrent, this.rect.left + this.rect.width / 2, this.rect.top + this.rect.height / 2); // new values for the translations and scale
+
+    let x = 0;
+    let y = 0;
+
+    if (distanceMouseButton < this.distanceToTrigger) {
+      if (!this.state.hover) {
+        this.enter();
+      }
+
+      x = (mousepos.x + window.scrollX - (this.rect.left + this.rect.width / 2)) * 0.3;
+      y = (mousepos.y + this.scrollCurrent - (this.rect.top + this.rect.height / 2)) * 0.3;
+    } else if (this.state.hover) {
+      this.leave();
+    }
+
+    this.renderedStyles['tx'].current = x;
+    this.renderedStyles['ty'].current = y;
+
+    for (const key in this.renderedStyles) {
+      this.renderedStyles[key].previous = lerp(this.renderedStyles[key].previous, this.renderedStyles[key].current, this.renderedStyles[key].amt);
+    }
+
+    this.DOM.el.style.transform = `translate3d(${this.renderedStyles['tx'].previous}px, ${this.renderedStyles['ty'].previous}px, 0)`;
+    this.DOM.text.style.transform = `translate3d(${-this.renderedStyles['tx'].previous * 0.2}px, ${-this.renderedStyles['ty'].previous * 0.2}px, 0)`;
+    this.DOM.deco.style.transform = `scale(${this.renderedStyles['scale'].previous})`;
+    requestAnimationFrame(() => this.render());
+  }
+
+  enter() {
+    this.emit('enter');
+    this.state.hover = true;
+    this.DOM.el.classList.add('button--hover');
+    this.renderedStyles['scale'].current = 1.3;
+    gsapWithCSS.killTweensOf(this.DOM.filler);
+    gsapWithCSS.killTweensOf(this.DOM.textinner);
+    gsapWithCSS.killTweensOf(document.body);
+    gsapWithCSS.timeline().to(this.DOM.filler, 0.5, {
+      ease: 'Power3.easeOut',
+      startAt: {
+        y: '0%'
+      },
+      y: '-100%'
+    }, 0).to(this.DOM.textinner, 0.4, {
+      ease: 'Expo.easeOut',
+      scale: 0.8
+    }, 0).to(this.DOM.textIconBefore, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '600%',
+      scale: 0
+    }, 0).to(this.DOM.textIconAfter, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '0%',
+      scale: 1
+    }, 0).to(this.DOM.deco, 0, {
+      ease: 'Expo.easeOut',
+      borderColor: 'rgba(var(--data-color-link), 0.8)'
+    }, 0);
+  }
+
+  leave() {
+    this.emit('leave');
+    this.state.hover = false;
+    this.DOM.el.classList.remove('button--hover');
+    this.renderedStyles['scale'].current = 1;
+    gsapWithCSS.killTweensOf(document.body);
+    gsapWithCSS.killTweensOf(this.DOM.filler);
+    gsapWithCSS.timeline().to(this.DOM.filler, 0.4, {
+      ease: 'Power3.easeOut',
+      y: '0%'
+    }, 0).to(this.DOM.textinner, 0.4, {
+      ease: 'Expo.easeOut',
+      scale: 1
+    }, 0).to(this.DOM.textIconBefore, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '0%',
+      scale: 1
+    }, 0).to(this.DOM.textIconAfter, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '-600%',
+      scale: 0
+    }, 0).to(this.DOM.deco, 0, {
+      ease: 'Expo.easeOut',
+      borderColor: 'rgba(var(--data-color-secondary), 0.8)'
+    }, 0);
+  }
+
+}
 ;// CONCATENATED MODULE: ./app/classes/Page.js
+
 
 
 
@@ -12775,7 +13054,7 @@ class Page {
       animationsFade: '[data-animation="fade"]',
       animationsFloating: '[data-animation="floating"]',
       animationsNav: '.navigation',
-      animationsNavTrigger: '.home__hero',
+      animationsNavTrigger: ['.home__hero', '.home__services', '.home__gallery', '.home__contact'],
       preloaders: '[data-src]'
     };
     this.id = id;
@@ -12802,8 +13081,11 @@ class Page {
     };
     this.isResizing = false;
     this.mediaMobile = false;
+    window.locked = true; // used for scrolling
+
     this.isDown = false;
     this.onWheelEvent = this.onWheel.bind(this);
+    this.stickyButton = new StickyButton(document.querySelector('.button'));
   }
 
   create() {
@@ -12840,7 +13122,8 @@ class Page {
         const href = link.href;
         const linkNaming = href.split('#')[1];
         link.addEventListener('click', e => {
-          e.preventDefault();
+          e.preventDefault(); // Lock screen when navigating to the hero section
+
           const target = document.getElementById(`${linkNaming}`);
 
           if (this.mediaMobile) {
@@ -12864,19 +13147,17 @@ class Page {
 
     activateLink(this.selectorChildren.footerLinks);
     activateLink(this.selectorChildren.navigationLinks); // logo
-
-    this.selectorChildren.navigationLogo.addEventListener('click', e => {
-      e.preventDefault();
-
-      if (this.mediaMobile) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      } else {
-        this.scroll.target = 0;
-      }
-    });
+    // this.selectorChildren.navigationLogo.addEventListener('click', (e) => {
+    //   e.preventDefault();
+    //   if (this.mediaMobile) {
+    //     window.scrollTo({
+    //       top: 0,
+    //       behavior: 'smooth',
+    //     });
+    //   } else {
+    //     this.scroll.target = 0;
+    //   }
+    // });
   } // called from Home.js after the create methods
 
 
@@ -12903,7 +13184,7 @@ class Page {
       });
     }
 
-    this.animationsNav = new NavBg(this.elements.animationsNavTrigger);
+    this.animationsNav = new NavBg(this.elements.animationsNavTrigger, this.elements.animationsNavTrigger);
   }
 
   show(animation) {
@@ -12967,10 +13248,13 @@ class Page {
 
   onWheel(event) {
     if (!event) return;
-    const {
-      pixelY
-    } = normalize_wheel_default()(event);
-    this.scroll.target += pixelY;
+
+    if (!window.locked) {
+      const {
+        pixelY
+      } = normalize_wheel_default()(event);
+      this.scroll.target += pixelY;
+    }
   }
 
   onResize(e) {
@@ -12978,6 +13262,10 @@ class Page {
 
     if (this.hero && this.hero.onResize) {
       this.hero.onResize(e);
+    }
+
+    if (this.button && this.button.onResize) {
+      this.button.onResize();
     }
 
     if (this.elements.wrapper) {
@@ -12996,7 +13284,13 @@ class Page {
     }
 
     if (this.element && this.element.classList.contains('home')) {
-      // if it's mobile device we set the Height to match mobile viewport, else 100vh
+      this.boundaries = {
+        hero: document.querySelector('.home__hero').getBoundingClientRect(),
+        services: document.querySelector('.home__services').getBoundingClientRect(),
+        projects: document.querySelector('.home__gallery').getBoundingClientRect(),
+        contact: document.querySelector('.home__contact').getBoundingClientRect()
+      }; // if it's mobile device we set the Height to match mobile viewport, else 100vh
+
       if (!this.media.matches) {
         document.querySelector('.home__hero').style.height = `100vh`;
         return;
@@ -13034,6 +13328,20 @@ class Page {
 
     if (this.scroll.current < 0.01) {
       this.scroll.current = 0;
+    } // if (this.boundaries) {
+    //   console.log(
+    //     this.boundaries.services.top - this.boundaries.services.top * 0.3
+    //   );
+    // }
+
+
+    if (!window.locked && this.boundaries && this.scroll.current < this.boundaries.services.top - this.boundaries.services.top * 0.3) {
+      window.locked = true;
+      this.scroll.target = 0;
+    }
+
+    if (window.locked && this.boundaries && this.scroll.current >= this.boundaries.services.top - 10) {
+      window.locked = false;
     }
 
     this.scroll.last = this.scroll.current.toFixed(); // Update translateY only if the movement is actually made
@@ -13057,6 +13365,10 @@ class Page {
     if (playingVid && !this.isResizing) {
       playingVid.style[this.transformPrefix] = `translateY(${this.scroll.current.toFixed()}px)`;
     }
+
+    if (this.stickyButton && this.stickyButton.update) {
+      this.stickyButton.update(this.scroll);
+    }
   }
   /*
    **  ------
@@ -13074,6 +13386,9 @@ class Page {
     //   });
     // });
     // add both to array affect element with the same [i] on hover
+    document.querySelector('.button').addEventListener('click', () => {
+      this.scroll.target = this.boundaries.services.top;
+    });
     document.querySelector('.home__services__wrapper').addEventListener('mousemove', e => {
       const mousePos = {
         clientX: e.clientX,
@@ -13243,7 +13558,7 @@ class Modal extends Component {
     this.textContainer = document.createElement('DIV');
     this.textContainer.classList.add('loader__container');
     this.loader.appendChild(this.textContainer);
-    const htmlCode = `<p class="loader__text">You can find the source code for this site on my <a class="footer__list__link" href='https://github.com/chrisaveryano' target="_blank">Github</a>. If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
+    const htmlCode = `<p class="loader__text">If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
     <br>
     - Chris Averyano`;
     this.textContainer.insertAdjacentHTML('afterbegin', htmlCode);
@@ -13413,10 +13728,11 @@ class Contact extends Component {
 
 }
 ;// CONCATENATED MODULE: ./app/classes/Colors.js
-
-
 class Colors {
-  constructor() {}
+  constructor() {
+    this.monitorsDark = document.querySelectorAll('.services__optimized__dev__image--offdark');
+    this.monitorsLight = document.querySelectorAll('.services__optimized__dev__image--offlight');
+  }
 
   change({
     backgroundColor,
@@ -13428,19 +13744,24 @@ class Colors {
     servicesBgColor,
     servicesElColor
   }) {
-    document.documentElement.style.setProperty('--data-color-primary', color);
-    document.documentElement.style.setProperty('--data-color-link', linkColor);
+    // if LightMode
+    if (color === '0,0,0') {
+      [...this.monitorsDark].map(el => el.style.opacity = 0);
+      [...this.monitorsLight].map(el => el.style.opacity = 1);
+    } else {
+      // if DarkMode
+      [...this.monitorsDark].map(el => el.style.opacity = 1);
+      [...this.monitorsLight].map(el => el.style.opacity = 0);
+    }
+
+    document.documentElement.style.setProperty('--data-color-primary', color); // document.documentElement.style.setProperty('--data-color-link', linkColor);
+
     document.documentElement.style.setProperty('--data-color-servicesel', servicesElColor);
     document.documentElement.style.setProperty('--data-color-servicesbg', servicesBgColor);
     document.documentElement.style.setProperty('--data-color-brightness-on', brightnessOn);
     document.documentElement.style.setProperty('--data-color-brightness-off', brightnessOff);
     document.documentElement.style.setProperty('--data-color-transparent', transparent);
-    document.documentElement.style.setProperty('--data-color-secondary', backgroundColor); // GSAP.to(document.documentElement, {
-    //   backgroundColor,
-    //   color,
-    //   duration: 1.5,
-    // });
-    // document.documentElement.style.setProperty('--your-variable', '#YOURCOLOR');
+    document.documentElement.style.setProperty('--data-color-secondary', backgroundColor);
   }
 
 }
@@ -13553,7 +13874,7 @@ class Hero_Hero {
     }
 
     this.isVisible = true;
-    document.body.classList.remove('refresh');
+    document.documentElement.classList.remove('refresh');
   }
 
   hide() {
@@ -13635,7 +13956,7 @@ class Hero_Hero {
     }
 
     this.isVisible = false;
-    document.body.classList.add('refresh');
+    document.documentElement.classList.add('refresh');
   }
 
   changeColor(state) {
@@ -13648,7 +13969,7 @@ class Hero_Hero {
           transparent: '1,1,1,0.9',
           brightnessOn: '1',
           brightnessOff: '0.8',
-          linkColor: '196, 113, 237',
+          // linkColor: '196, 113, 237',
           servicesBgColor: '23, 23, 23',
           servicesElColor: '39, 39, 39'
         });
@@ -13658,27 +13979,16 @@ class Hero_Hero {
         ColorsManager.change({
           color: '0,0,0',
           backgroundColor: '255,255,255',
-          transparent: '255,255,255,0.25',
+          transparent: '255,255,255,0.9',
           brightnessOn: '0.95',
           brightnessOff: '1',
-          linkColor: '196, 113, 237',
+          // linkColor: '196, 113, 237',
           servicesBgColor: '250, 250, 250',
           servicesElColor: '199, 199, 199' // linkColor: '247, 121, 125',
 
         });
         this.heroLogo.style.filter = `brightness(0)`;
       }
-
-      this.animationIn = gsapWithCSS.timeline();
-      this.animationIn.fromTo(this.element, {
-        autoAlpha: 0
-      }, {
-        autoAlpha: 1,
-        onComplete: resolve
-      });
-      this.animationIn.call(_ => {
-        resolve();
-      });
     });
   }
 
@@ -13801,9 +14111,8 @@ class Home extends Page {
 
 class App {
   constructor() {
-    const version = 'v1.0.8c';
+    const version = 'v1.0.9';
     console.log(version);
-    document.querySelector('.development__version').textContent += version;
     console.log('%c AV', 'font-weight: bold; font-size: 50px; text-shadow: 1.5px 1.5px 0 #f7797d , 3px 3px 0 #c471ed; padding: 10px 10px 10px 0px; margin-left: -20px;');
     this.checkMedia();
     this.createContent();

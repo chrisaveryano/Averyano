@@ -12,6 +12,8 @@ import NavBg from '../animations/NavBg';
 
 import Services from '../pages/Home/sections/Services';
 
+import StickyButton from '../components/StickyButton/StickyButton';
+
 export default class Page {
   constructor({ element, elements, id }) {
     this.selector = element;
@@ -23,7 +25,12 @@ export default class Page {
       animationsFloating: '[data-animation="floating"]',
 
       animationsNav: '.navigation',
-      animationsNavTrigger: '.home__hero',
+      animationsNavTrigger: [
+        '.home__hero',
+        '.home__services',
+        '.home__gallery',
+        '.home__contact',
+      ],
 
       preloaders: '[data-src]',
     };
@@ -57,9 +64,13 @@ export default class Page {
     this.isResizing = false;
     this.mediaMobile = false;
 
+    window.locked = true; // used for scrolling
+
     this.isDown = false;
 
     this.onWheelEvent = this.onWheel.bind(this);
+
+    this.stickyButton = new StickyButton(document.querySelector('.button'));
   }
 
   create() {
@@ -105,6 +116,9 @@ export default class Page {
 
         link.addEventListener('click', (e) => {
           e.preventDefault();
+
+          // Lock screen when navigating to the hero section
+
           const target = document.getElementById(`${linkNaming}`);
 
           if (this.mediaMobile) {
@@ -131,17 +145,17 @@ export default class Page {
     activateLink(this.selectorChildren.navigationLinks);
 
     // logo
-    this.selectorChildren.navigationLogo.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (this.mediaMobile) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
-      } else {
-        this.scroll.target = 0;
-      }
-    });
+    // this.selectorChildren.navigationLogo.addEventListener('click', (e) => {
+    //   e.preventDefault();
+    //   if (this.mediaMobile) {
+    //     window.scrollTo({
+    //       top: 0,
+    //       behavior: 'smooth',
+    //     });
+    //   } else {
+    //     this.scroll.target = 0;
+    //   }
+    // });
   }
 
   // called from Home.js after the create methods
@@ -171,7 +185,10 @@ export default class Page {
       });
     }
 
-    this.animationsNav = new NavBg(this.elements.animationsNavTrigger);
+    this.animationsNav = new NavBg(
+      this.elements.animationsNavTrigger,
+      this.elements.animationsNavTrigger
+    );
   }
 
   show(animation) {
@@ -245,8 +262,10 @@ export default class Page {
   onWheel(event) {
     if (!event) return;
 
-    const { pixelY } = NormalizeWheel(event);
-    this.scroll.target += pixelY;
+    if (!window.locked) {
+      const { pixelY } = NormalizeWheel(event);
+      this.scroll.target += pixelY;
+    }
   }
 
   onResize(e) {
@@ -254,6 +273,10 @@ export default class Page {
 
     if (this.hero && this.hero.onResize) {
       this.hero.onResize(e);
+    }
+
+    if (this.button && this.button.onResize) {
+      this.button.onResize();
     }
 
     if (this.elements.wrapper) {
@@ -276,7 +299,21 @@ export default class Page {
     }
 
     if (this.element && this.element.classList.contains('home')) {
+      this.boundaries = {
+        hero: document.querySelector('.home__hero').getBoundingClientRect(),
+        services: document
+          .querySelector('.home__services')
+          .getBoundingClientRect(),
+        projects: document
+          .querySelector('.home__gallery')
+          .getBoundingClientRect(),
+        contact: document
+          .querySelector('.home__contact')
+          .getBoundingClientRect(),
+      };
+
       // if it's mobile device we set the Height to match mobile viewport, else 100vh
+
       if (!this.media.matches) {
         document.querySelector('.home__hero').style.height = `100vh`;
         return;
@@ -331,6 +368,29 @@ export default class Page {
       this.scroll.current = 0;
     }
 
+    // if (this.boundaries) {
+    //   console.log(
+    //     this.boundaries.services.top - this.boundaries.services.top * 0.3
+    //   );
+    // }
+    if (
+      !window.locked &&
+      this.boundaries &&
+      this.scroll.current <
+        this.boundaries.services.top - this.boundaries.services.top * 0.3
+    ) {
+      window.locked = true;
+      this.scroll.target = 0;
+    }
+
+    if (
+      window.locked &&
+      this.boundaries &&
+      this.scroll.current >= this.boundaries.services.top - 10
+    ) {
+      window.locked = false;
+    }
+
     this.scroll.last = this.scroll.current.toFixed();
 
     // Update translateY only if the movement is actually made
@@ -363,6 +423,10 @@ export default class Page {
         this.transformPrefix
       ] = `translateY(${this.scroll.current.toFixed()}px)`;
     }
+
+    if (this.stickyButton && this.stickyButton.update) {
+      this.stickyButton.update(this.scroll);
+    }
   }
 
   /*
@@ -381,6 +445,10 @@ export default class Page {
     //   });
     // });
     // add both to array affect element with the same [i] on hover
+
+    document.querySelector('.button').addEventListener('click', () => {
+      this.scroll.target = this.boundaries.services.top;
+    });
 
     document
       .querySelector('.home__services__wrapper')

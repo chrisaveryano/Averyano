@@ -30,6 +30,7 @@ export default class Hero {
       { x: '0%', duration: 1 },
       1
     );
+
     this.addEventListeners();
 
     // if (
@@ -112,7 +113,7 @@ export default class Hero {
       );
     }
     this.isVisible = true;
-    document.body.classList.remove('refresh');
+    document.documentElement.classList.remove('refresh');
   }
   hide() {
     // if coming from resize, change instantly
@@ -203,7 +204,7 @@ export default class Hero {
       );
     }
     this.isVisible = false;
-    document.body.classList.add('refresh');
+    document.documentElement.classList.add('refresh');
   }
 
   changeColor(state) {
@@ -216,7 +217,7 @@ export default class Hero {
           transparent: '1,1,1,0.9',
           brightnessOn: '1',
           brightnessOff: '0.8',
-          linkColor: '196, 113, 237',
+          // linkColor: '196, 113, 237',
           servicesBgColor: '23, 23, 23',
           servicesElColor: '39, 39, 39',
         });
@@ -226,30 +227,16 @@ export default class Hero {
         ColorsManager.change({
           color: '0,0,0',
           backgroundColor: '255,255,255',
-          transparent: '255,255,255,0.25',
+          transparent: '255,255,255,0.9',
           brightnessOn: '0.95',
           brightnessOff: '1',
-          linkColor: '196, 113, 237',
+          // linkColor: '196, 113, 237',
           servicesBgColor: '250, 250, 250',
           servicesElColor: '199, 199, 199',
           // linkColor: '247, 121, 125',
         });
         this.heroLogo.style.filter = `brightness(0)`;
       }
-
-      this.animationIn = GSAP.timeline();
-      this.animationIn.fromTo(
-        this.element,
-        { autoAlpha: 0 },
-        {
-          autoAlpha: 1,
-          onComplete: resolve,
-        }
-      );
-
-      this.animationIn.call((_) => {
-        resolve();
-      });
     });
   }
   addEventListeners() {

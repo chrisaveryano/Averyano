@@ -26,7 +26,7 @@ export default class Modal extends Component {
     this.textContainer.classList.add('loader__container');
     this.loader.appendChild(this.textContainer);
 
-    const htmlCode = `<p class="loader__text">You can find the source code for this site on my <a class="footer__list__link" href='https://github.com/chrisaveryano' target="_blank">Github</a>. If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
+    const htmlCode = `<p class="loader__text">If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
     <br>
     - Chris Averyano`;
     this.textContainer.insertAdjacentHTML('afterbegin', htmlCode);

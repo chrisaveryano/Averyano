@@ -1,6 +1,6 @@
 {
   "name": "averyano.com",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "Chris Averyano official website",
   "main": "app.js",
   "scripts": {

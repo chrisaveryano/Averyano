@@ -7,9 +7,8 @@ import Home from './pages/Home';
 
 class App {
   constructor() {
-    const version = 'v1.0.8c';
+    const version = 'v1.0.9';
     console.log(version);
-    document.querySelector('.development__version').textContent += version;
 
     console.log(
       '%c AV',

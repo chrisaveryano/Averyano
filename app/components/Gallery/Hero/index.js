@@ -48,9 +48,9 @@ export default class {
       y: 0,
     };
 
-    this.timer = setTimeout(() => {
-      this.startAutoPilot();
-    }, 6000);
+    this.startAutoPilot();
+    // this.timer = setTimeout(() => {
+    // }, 6000);
 
     this.show();
   }
