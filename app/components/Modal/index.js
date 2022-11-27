@@ -26,7 +26,7 @@ export default class Modal extends Component {
     this.textContainer.classList.add('loader__container');
     this.loader.appendChild(this.textContainer);
 
-    const htmlCode = `<p class="loader__text">This is an early version of this website. The website is fully open-source! You can find the source code on my <a class="footer__list__link" href='https://github.com/chrisaveryano' target="_blank">Github</a>. If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
+    const htmlCode = `<p class="loader__text">If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
     <br>
     - Chris Averyano`;
     this.textContainer.insertAdjacentHTML('afterbegin', htmlCode);
@@ -72,8 +72,9 @@ export default class Modal extends Component {
       },
       true
     );
-    this.loader.style.transform = `translate(0%, 0%)`;
+    this.loader.style.opacity = 1;
   }
+
   hideModal() {
     this.timelineIn = GSAP.timeline({
       onComplete: (_) => {},
@@ -82,7 +83,7 @@ export default class Modal extends Component {
       this.textContainer,
       {
         autoAlpha: 1,
-        x: '0%',
+        y: '0%',
       },
       {
         // delay: 1 * 0.2,
@@ -93,7 +94,7 @@ export default class Modal extends Component {
           amount: 0.5,
           axis: 'x',
         },
-        x: '100%',
+        y: '-100%',
       },
       0
     );
@@ -106,6 +107,6 @@ export default class Modal extends Component {
       },
       true
     );
-    this.loader.style.transform = `translate(100%, 0%)`;
+    this.loader.style.opacity = 0;
   }
 }

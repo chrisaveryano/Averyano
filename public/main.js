@@ -2290,7 +2290,7 @@ module.exports = getAllKeys;
 /***/ 404:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-var isKeyable = __webpack_require__(9008);
+var isKeyable = __webpack_require__(4480);
 /**
  * Gets the data for `map`.
  *
@@ -2801,7 +2801,7 @@ module.exports = isKey;
 
 /***/ }),
 
-/***/ 9008:
+/***/ 4480:
 /***/ ((module) => {
 
 /**
@@ -4893,7 +4893,7 @@ module.exports = UserAgent_DEPRECATED;
 
 /***/ }),
 
-/***/ 4480:
+/***/ 4284:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -4979,7 +4979,7 @@ module.exports = isEventSupported;
 
 var UserAgent_DEPRECATED = __webpack_require__(2907);
 
-var isEventSupported = __webpack_require__(4480); // Reasonable defaults
+var isEventSupported = __webpack_require__(4284); // Reasonable defaults
 
 
 var PIXEL_STEP = 10;
@@ -5335,9 +5335,6 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 
-// EXTERNAL MODULE: ./node_modules/normalize-wheel/index.js
-var normalize_wheel = __webpack_require__(7320);
-var normalize_wheel_default = /*#__PURE__*/__webpack_require__.n(normalize_wheel);
 ;// CONCATENATED MODULE: ./node_modules/gsap/gsap-core.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
@@ -11296,12 +11293,665 @@ var gsapWithCSS = gsap.registerPlugin(CSSPlugin) || gsap,
     // to protect from tree shaking
 TweenMaxWithCSS = gsapWithCSS.core.Tween;
 
-// EXTERNAL MODULE: ./node_modules/events/events.js
-var events = __webpack_require__(1590);
-var events_default = /*#__PURE__*/__webpack_require__.n(events);
+// EXTERNAL MODULE: ./node_modules/lodash/map.js
+var map = __webpack_require__(7976);
+var map_default = /*#__PURE__*/__webpack_require__.n(map);
 // EXTERNAL MODULE: ./node_modules/lodash/each.js
 var lodash_each = __webpack_require__(6270);
 var each_default = /*#__PURE__*/__webpack_require__.n(lodash_each);
+;// CONCATENATED MODULE: ./app/components/Gallery/Hero/Media.js
+
+/* harmony default export */ const Media = (class {
+  constructor({
+    img,
+    i
+  }) {
+    this.position = {
+      x: 0,
+      y: 0,
+      prevx: 0,
+      prevy: 0
+    };
+    this.element = img;
+    this.index = i;
+    this.galleryElement = document.querySelector('.hero__gallery'); // this.sizes will be calculated after all the content is created
+
+    this.extra = {
+      x: 0,
+      y: 0
+    };
+    this.create();
+    this.addEventListeners();
+  }
+
+  create() {
+    this.bounds = this.element.getBoundingClientRect();
+    this.defaultX = this.bounds.x;
+    this.defaultY = this.bounds.y;
+    this.createBounds();
+  }
+
+  createBounds() {
+    this.position.x = this.defaultX;
+    this.position.y = this.defaultY;
+    this.bounds = this.element.getBoundingClientRect();
+    this.update();
+  }
+  /**
+   * Events.
+   **/
+  // Animations
+
+
+  show(delayTiming = this.index * 0.25) {
+    gsapWithCSS.fromTo(this.element, {
+      autoAlpha: 0
+    }, {
+      autoAlpha: 1,
+      duration: 1 // delay: delayTiming,
+
+    }, 1);
+  }
+
+  hide() {
+    gsapWithCSS.to(this.element, {
+      autoAlpha: 0
+    });
+  }
+
+  onResize(sizes, scroll) {
+    this.extra = {
+      x: 0,
+      y: 0,
+      prevX: 0,
+      prevY: 0
+    }; // this.sizes = sizes;
+    // variables
+
+    this.position.x = this.defaultX;
+    this.position.y = this.defaultY; // this.position.x = this.bounds.x + scroll.x + this.extra.x;
+    // this.position.y = this.bounds.y + scroll.y + this.extra.y;
+  }
+
+  updateScale() {}
+
+  addEventListeners() {
+    this.element.addEventListener('animationend', () => {
+      this.element.classList.remove('hero__gallery__media--anim');
+    });
+  }
+  /**
+   * Loop.
+   **/
+
+
+  update(scroll = {
+    x: 0,
+    y: 0
+  }) {
+    if (!this.bounds) return; // fade-in fx
+
+    if (this.extra.prevX < this.extra.x || this.extra.prevX > this.extra.x) {
+      this.element.classList.add('hero__gallery__media--anim');
+    }
+
+    if (this.extra.prevY < this.extra.y || this.extra.prevY > this.extra.y) {
+      this.element.classList.add('hero__gallery__media--anim');
+    } // position
+
+
+    this.element.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`; // variables
+
+    this.extra.prevX = this.extra.x;
+    this.extra.prevY = this.extra.y;
+    this.position.x = this.bounds.x + scroll.x + this.extra.x;
+    this.position.y = this.bounds.y + scroll.y + this.extra.y;
+  }
+
+});
+;// CONCATENATED MODULE: ./app/components/Gallery/Hero/index.js
+
+
+
+
+/* harmony default export */ const Hero = (class {
+  constructor() {
+    this.autoPilot = false;
+    this.inVision = true;
+    this.medias = [];
+    this.homeHero = document.querySelector('.home__hero');
+    this.galleryElement = document.querySelector('.hero__gallery');
+    this.galleryMedias = document.querySelectorAll('.hero__gallery__media'); // we set the bounds here to avoid any issues with resize later
+
+    this.galleryBounds = this.galleryElement.getBoundingClientRect();
+    this.createGallery();
+    this.offset = {
+      x: 0,
+      y: 0
+    };
+    this.x = {
+      current: 0,
+      target: 0,
+      lerp: 0.1,
+      direction: 'left'
+    };
+    this.y = {
+      current: 0,
+      target: 0,
+      lerp: 0.1,
+      direction: 'bottom'
+    };
+    this.scrollCurrent = {
+      x: 0,
+      y: 0
+    };
+    this.scroll = {
+      x: 0,
+      y: 0
+    };
+    this.startAutoPilot(); // this.timer = setTimeout(() => {
+    // }, 6000);
+
+    this.show();
+  }
+
+  createGallery() {
+    each_default()(this.galleryMedias, (img, i) => {
+      const media = new Media({
+        img,
+        i
+      });
+      this.medias.push(media);
+    });
+  }
+
+  createArray() {
+    this.imageArray = [{
+      x: -645.0750122070312,
+      y: 14.100000381469727,
+      width: 418.3000183105469,
+      height: 850.7000122070312,
+      src: 'http://localhost:3000/images/hero/prelabComparison.jpg',
+      i: 0
+    }, {
+      x: -212.6750030517578,
+      y: 14.100000381469727,
+      width: 310.20001220703125,
+      height: 310.1999816894531,
+      src: 'http://localhost:3000/images/hero/converse_promo.jpg',
+      i: 1
+    }, {
+      x: 111.625,
+      y: 14.100000381469727,
+      width: 634.5,
+      height: 310.1999816894531,
+      src: 'http://localhost:3000/images/hero/wendel_beauty.jpg',
+      i: 2
+    }, {
+      x: 760.2249755859375,
+      y: 14.100000381469727,
+      width: 310.2000732421875,
+      height: 634.5,
+      src: 'http://localhost:3000/images/hero/vld-contact.jpg',
+      i: 3
+    }, {
+      x: 1084.5250244140625,
+      y: 14.100000381469727,
+      width: 742.5999755859375,
+      height: 742.6000366210938,
+      src: 'http://localhost:3000/images/hero/prelabComparison.jpg',
+      i: 4
+    }, {
+      x: -212.6750030517578,
+      y: 338.3999938964844,
+      width: 634.5,
+      height: 310.1999816894531,
+      src: 'http://localhost:3000/images/hero/OniMask.jpg',
+      i: 5
+    }, {
+      x: 435.92498779296875,
+      y: 338.3999938964844,
+      width: 310.20001220703125,
+      height: 310.1999816894531,
+      src: 'http://localhost:3000/images/hero/wendel_moretti_together.jpg',
+      i: 6
+    }, {
+      x: -212.6750030517578,
+      y: 662.7000122070312,
+      width: 850.7000122070312,
+      height: 418.29998779296875,
+      src: 'http://localhost:3000/images/hero/abstract1.jpg',
+      i: 7
+    }, {
+      x: 652.125,
+      y: 662.7000122070312,
+      width: 418.300048828125,
+      height: 850.7000122070312,
+      src: 'http://localhost:3000/images/hero/GardenOfLight.jpg',
+      i: 8
+    }, {
+      x: 1084.5250244140625,
+      y: 770.7999877929688,
+      width: 310.199951171875,
+      height: 634.5000610351562,
+      src: 'http://localhost:3000/images/hero/phukr.jpg',
+      i: 9
+    }, {
+      x: 1408.824951171875,
+      y: 770.7999877929688,
+      width: 418.300048828125,
+      height: 418.29998779296875,
+      src: 'http://localhost:3000/images/hero/converse_promo.jpg',
+      i: 10
+    }, {
+      x: -645.0750122070312,
+      y: 878.9000244140625,
+      width: 418.3000183105469,
+      height: 634.5,
+      src: 'http://localhost:3000/images/hero/GardenOfLight.jpg',
+      i: 11
+    }, {
+      x: -212.6750030517578,
+      y: 1095.0999755859375,
+      width: 418.29998779296875,
+      height: 418.300048828125,
+      src: 'http://localhost:3000/images/hero/drzDesktop1.jpg',
+      i: 12
+    }, {
+      x: 219.72500610351562,
+      y: 1095.0999755859375,
+      width: 418.3000183105469,
+      height: 526.4000244140625,
+      src: 'http://localhost:3000/images/hero/converse_promo.jpg',
+      i: 13
+    }, {
+      x: 1408.824951171875,
+      y: 1203.199951171875,
+      width: 418.300048828125,
+      height: 310.2000732421875,
+      src: 'http://localhost:3000/images/hero/abstract1.jpg',
+      i: 14
+    }, {
+      x: 1084.5250244140625,
+      y: 1419.4000244140625,
+      width: 310.199951171875,
+      height: 310.199951171875,
+      src: 'http://localhost:3000/images/hero/drzDesktop1.jpg',
+      i: 15
+    }, {
+      x: -645.0750122070312,
+      y: 1527.5,
+      width: 310.20001220703125,
+      height: 310.199951171875,
+      src: 'http://localhost:3000/images/hero/abstract2.jpg',
+      i: 16
+    }, {
+      x: -320.7749938964844,
+      y: 1527.5,
+      width: 526.4000244140625,
+      height: 418.300048828125,
+      src: 'http://localhost:3000/images/hero/drzDesktop2.jpg',
+      i: 17
+    }, {
+      x: 652.125,
+      y: 1527.5,
+      width: 418.300048828125,
+      height: 418.300048828125,
+      src: 'http://localhost:3000/images/hero/abstract1.jpg',
+      i: 18
+    }, {
+      x: 1408.824951171875,
+      y: 1527.5,
+      width: 418.300048828125,
+      height: 418.300048828125,
+      src: 'http://localhost:3000/images/prj1preview.jpg',
+      i: 19
+    }, {
+      x: 219.72500610351562,
+      y: 1635.5999755859375,
+      width: 418.3000183105469,
+      height: 418.2999267578125,
+      src: 'http://localhost:3000/images/hero/abstract2.jpg',
+      i: 20
+    }, {
+      x: 1084.5250244140625,
+      y: 1743.699951171875,
+      width: 310.199951171875,
+      height: 310.199951171875,
+      src: 'http://localhost:3000/images/hero/drzDesktop2.jpg',
+      i: 21
+    }, {
+      x: -645.0750122070312,
+      y: 1851.800048828125,
+      width: 310.20001220703125,
+      height: 418.300048828125,
+      src: 'http://localhost:3000/images/hero/prelabComparison.jpg',
+      i: 22
+    }, {
+      x: -320.7749938964844,
+      y: 1959.9000244140625,
+      width: 526.4000244140625,
+      height: 310.2000732421875,
+      src: 'http://localhost:3000/images/hero/drzDesktop3.jpg',
+      i: 23
+    }, {
+      x: 652.125,
+      y: 1959.9000244140625,
+      width: 418.300048828125,
+      height: 310.2000732421875,
+      src: 'http://localhost:3000/images/hero/OniMask.jpg',
+      i: 24
+    }, {
+      x: 1408.824951171875,
+      y: 1959.9000244140625,
+      width: 418.300048828125,
+      height: 310.2000732421875,
+      src: 'http://localhost:3000/images/hero/wendel_slideshow.jpg',
+      i: 25
+    }, {
+      x: 219.72500610351562,
+      y: 2068,
+      width: 418.3000183105469,
+      height: 202.10009765625,
+      src: 'http://localhost:3000/images/hero/cpose.jpg',
+      i: 26
+    }, {
+      x: 1084.5250244140625,
+      y: 2068,
+      width: 310.199951171875,
+      height: 202.10009765625,
+      src: 'http://localhost:3000/images/hero/drzDesktop3.jpg',
+      i: 27
+    }];
+  } // Animations
+
+
+  show() {
+    map_default()(this.medias, media => media.show());
+  }
+
+  hide() {
+    map_default()(this.medias, media => media.hide());
+  }
+  /**
+   * Events.
+   */
+
+
+  checkMobile() {
+    let media = window.matchMedia('(max-width: 768px)');
+    this.isMobile = !media.matches ? false : true;
+
+    if (this.isMobile) {
+      // Mobile basic
+      this.galleryElement.style.transform = `scale(1)`;
+    } else if (!this.isMobile) {
+      // Desktop basic
+      this.galleryElement.style.transform = `scale(1.5)`;
+      this.galleryElement.style.transformOrigin = `center`; // 4K Resolution
+
+      media = window.matchMedia('(min-width: 3840px)');
+
+      if (media.matches) {
+        this.galleryElement.style.transform = `scale(2.25)`;
+      }
+    }
+  }
+
+  onResize(e) {
+    this.checkMobile();
+
+    if (!this.isMobile) {
+      this.offset.x = this.galleryBounds.width * 0.2;
+      this.offset.y = this.galleryBounds.height * 0.2;
+    } else {
+      this.offset.x = 1200;
+      this.offset.y = this.galleryBounds.height * 0.2;
+    }
+
+    this.galleryWidth = this.galleryBounds.width / window.innerWidth + this.offset.x;
+    this.galleryHeight = this.galleryBounds.height / window.innerHeight + this.offset.y;
+    this.gallerySizes = {
+      height: this.galleryBounds.height / window.innerHeight,
+      width: this.galleryBounds.width / window.innerWidth
+    };
+    this.scroll.x = this.x.target = 0;
+    this.scroll.y = this.y.target = 0;
+    map_default()(this.medias, media => media.onResize(this.gallerySizes, this.scroll));
+    this.checkMobile(); // window.requestAnimationFrame((_) => {
+    //   this.onResizing = false;
+    // });
+  }
+
+  onTouchDown({
+    x,
+    y
+  }) {
+    if (this.autoPilot) this.autoPilot = false;
+    this.scrollCurrent.x = this.scroll.x;
+    this.scrollCurrent.y = this.scroll.y;
+  }
+
+  onTouchMove({
+    x,
+    y
+  }) {
+    const xDistance = x.start - x.end;
+    const yDistance = y.start - y.end;
+    this.x.target = this.scrollCurrent.x - xDistance;
+    this.y.target = this.scrollCurrent.y - yDistance;
+  }
+
+  onTouchUp({
+    x,
+    y
+  }) {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this.startAutoPilot();
+    }, 12000);
+  }
+
+  onWheel({
+    deltaX,
+    deltaY
+  }) {
+    this.x.target -= deltaX;
+    this.y.target -= deltaY;
+  }
+
+  startAutoPilot() {
+    this.autoPilot = true;
+  }
+
+  stopAutoPilot() {
+    this.autoPilot = false;
+  }
+  /**
+   * Update.
+   */
+
+
+  update() {
+    if (!this.galleryBounds || !this.inVision) return;
+
+    if (this.autoPilot) {
+      this.y.target += 1;
+      this.x.target += 1;
+      this.y.direction = 'top';
+      this.x.direction = 'right';
+    }
+
+    this.x.current = gsapWithCSS.utils.interpolate(this.x.current, this.x.target, this.x.lerp);
+    this.y.current = gsapWithCSS.utils.interpolate(this.y.current, this.y.target, this.y.lerp);
+
+    if (this.scroll.x < this.x.current) {
+      this.x.direction = 'right';
+    } else if (this.scroll.x > this.x.current) {
+      this.x.direction = 'left';
+    }
+
+    if (this.scroll.y < this.y.current) {
+      this.y.direction = 'top';
+    } else if (this.scroll.y > this.y.current) {
+      this.y.direction = 'bottom';
+    }
+
+    this.scroll.x = this.x.current;
+    this.scroll.y = this.y.current;
+    map_default()(this.medias, (media, i) => {
+      const x = media.position.x;
+
+      if (this.x.direction === 'left' && x < -this.galleryWidth * 0.8) {
+        media.extra.x += this.galleryBounds.width;
+      } else if (this.x.direction === 'right') {
+        if (x > this.galleryBounds.width * 0.85 && !this.isMobile || x > this.galleryWidth && this.isMobile) // this condition is a patch for mobile
+          media.extra.x -= this.galleryBounds.width;
+      }
+
+      const y = media.position.y;
+
+      if (this.y.direction === 'bottom' && y < -this.galleryHeight * 1.2) {
+        media.extra.y += this.galleryBounds.height;
+      } else if (this.y.direction === 'top' && y > this.galleryBounds.height * 0.8) {
+        media.extra.y -= this.galleryBounds.height;
+      }
+
+      media.update(this.scroll);
+    });
+  }
+
+});
+;// CONCATENATED MODULE: ./app/components/Gallery/index.js
+// @todo:
+// hide the box by default
+// on mobile disable the touch on body to prevent refreshing
+// when the box is open on mobile, re-enable the touch
+// optimize infinite scroll on mobile, offset needs to be different
+ // Box is made from Mesh and Program
+// Program are all the shaders required to build
+
+class Gallery {
+  constructor({
+    template
+  }) {
+    this.heroSize = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+    this.template = template;
+    this.x = {
+      start: 0,
+      distance: 0,
+      end: 0
+    };
+    this.y = {
+      start: 0,
+      distance: 0,
+      end: 0
+    };
+    this.createHero();
+    this.onResize();
+  }
+
+  createHero() {
+    this.hero = new Hero();
+  }
+  /**
+   * Events.
+   **/
+
+
+  checkMobile() {
+    if (this.hero && this.hero.checkMobile) {
+      this.hero.checkMobile();
+    }
+  }
+
+  onResize() {
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize();
+    }
+  }
+
+  onTouchDown(event) {
+    if (event.target.classList.contains('hero__gallery') || event.target.classList.contains('hero__gallery__media')) {
+      this.isDown = true;
+      this.x.start = event.touches ? event.touches[0].clientX : event.clientX;
+      this.y.start = event.touches ? event.touches[0].clientY : event.clientY;
+      const values = {
+        x: this.x,
+        y: this.y
+      };
+      if (this.hero) this.hero.onTouchDown(values);
+    }
+  }
+
+  onTouchMove(event) {
+    if (event.target.classList.contains('hero__gallery') || event.target.classList.contains('hero__gallery__media')) {
+      if (!this.isDown) return;
+      const x = event.touches ? event.touches[0].clientX : event.clientX;
+      const y = event.touches ? event.touches[0].clientY : event.clientY;
+      this.x.end = x;
+      this.y.end = y;
+      const values = {
+        x: this.x,
+        y: this.y
+      };
+      if (this.hero) this.hero.onTouchMove(values);
+    }
+  }
+
+  onTouchUp(event) {
+    this.isDown = false; // console.log(event, event.touches[0]);
+    // const x = event.touches[0].clientX ? event.touches[0].clientX : 0;
+    // const y = event.touches[0].clientX ? event.touches[0].clientY : 0;
+    // this.x.end = x;
+    // this.y.end = y;
+
+    const values = {
+      x: this.x,
+      y: this.y
+    };
+    if (this.hero) this.hero.onTouchUp(values);
+  }
+
+  onWheel(event) {
+    if (this.hero && this.hero.onWheel) {
+      this.hero.onWheel(event);
+    }
+  }
+  /**
+   * Loop.
+   */
+
+
+  update(scroll) {
+    if (this.hero && this.hero.inVision) {
+      this.hero.update();
+    }
+  }
+
+}
+;// CONCATENATED MODULE: ./app/components/Navigation/index.js
+// import { text } from 'express';
+
+class Navigation {
+  constructor() {
+    this.element = document.querySelector('.navigation');
+    this.elementWrapper = document.querySelector('.navigation__wrapper');
+  }
+
+  show() {
+    gsapWithCSS.set(this.elementWrapper, {
+      y: '0%'
+    });
+  }
+
+}
+// EXTERNAL MODULE: ./node_modules/events/events.js
+var events = __webpack_require__(1590);
+var events_default = /*#__PURE__*/__webpack_require__.n(events);
 ;// CONCATENATED MODULE: ./app/classes/Component.js
 
 
@@ -11366,9 +12016,15 @@ class Preloader extends Component {
         number: '.preloader__number',
         numberText: '.preloader__number__text',
         circle: '.preloader__circle',
-        images: document.querySelectorAll('img')
+        images: document.querySelectorAll('img'),
+        videos: document.querySelectorAll('video'),
+        videoSources: document.querySelectorAll('source')
       }
-    }); // split({
+    });
+    this.currentColor = 'hero__tonys-pink';
+    this.colorArrayDefault = ['hero__tonys-pink', 'hero__goldenrod', 'hero__biloba-flower', 'hero__lochmara', 'hero__monte-carlo'];
+    this.colorArrayNew = this.colorArrayDefault;
+    this.contentLoaded = false; // split({
     //   element: this.elements.title,
     //   expression: '<br>',
     // });
@@ -11381,6 +12037,9 @@ class Preloader extends Component {
 
     this.length = 0;
     this.createLoader();
+    this.timer = setTimeout(() => {
+      this.cancelLoader();
+    }, 5000);
   }
 
   createLoader() {
@@ -11389,11 +12048,45 @@ class Preloader extends Component {
 
       element.src = element.getAttribute('data-src');
     });
+    each_default()(this.elements.videos, element => {
+      element.onloadeddata = _ => {
+        this.onAssetLoaded();
+      };
+
+      element.poster = element.getAttribute('data-src');
+    });
+    each_default()(this.elements.videoSources, element => {
+      element.src = element.getAttribute('data-src');
+      element.parentElement.load();
+    });
+  }
+
+  cancelLoader() {
+    console.log('loading cancelled');
+    each_default()(this.elements.images, element => {
+      if (element.classList.contains('hero__gallery__media__image')) {
+        element.src = '';
+        element.style.display = 'none'; // cycle through colors array
+        // compare
+        // pick one, set current as picked
+
+        this.colorArrayNew = this.colorArrayNew.filter(val => val !== this.currentColor);
+
+        if (this.colorArrayNew.length === 0) {
+          this.colorArrayNew = this.colorArrayDefault;
+        }
+
+        const randomNum = Math.floor(Math.random() * this.colorArrayNew.length);
+        element.parentElement.classList.add(this.colorArrayNew[randomNum]);
+        this.currentColor = this.colorArrayNew[randomNum];
+      }
+    });
+    this.onLoaded();
   }
 
   onAssetLoaded() {
     this.length += 1;
-    const percent = this.length / this.elements.images.length;
+    const percent = this.length / (this.elements.images.length + this.elements.videos.length);
     this.elements.numberText.innerHTML = `${Math.round(percent * 100)}%`;
 
     if (percent === 1) {
@@ -11402,7 +12095,10 @@ class Preloader extends Component {
   }
 
   onLoaded() {
-    return new Promise(resolve => {
+    if (this.contentLoaded) return;
+    clearTimeout(this.timer);
+    this.contentLoaded = true;
+    this.loading = new Promise(resolve => {
       this.animateOut = gsapWithCSS.timeline({
         delay: 2
       }); // this.animateOut.to(this.elements.titleSpans, {
@@ -11442,6 +12138,8 @@ class Preloader extends Component {
     });
   }
 
+  loadSite() {}
+
   destroy() {
     this.element.parentNode.removeChild(this.element);
   }
@@ -11453,7 +12151,7 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
 ;// CONCATENATED MODULE: ./app/components/Video/Media.js
 
 
-/* harmony default export */ const Media = (class {
+/* harmony default export */ const Video_Media = (class {
   constructor({
     videoElement,
     videoProgress,
@@ -11462,6 +12160,7 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
     pauseBtn,
     fullBtn
   }) {
+    this.transformPrefix = prefix_default()('transform');
     this.videoElement = videoElement;
     this.videoProgress = videoProgress;
     this.videoWrapper = videoWrapper;
@@ -11471,6 +12170,7 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
     this.isPlaying = false;
     this.isTimer = false;
     this.isBlinking = false;
+    this.isFullscreen = false;
     this.blinkCount = 0;
     this.addEventListeners();
     this.update();
@@ -11539,7 +12239,44 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
     }
   }
 
+  toggleNavigation() {
+    const navItems = document.querySelectorAll('.nav__js');
+    each_default()(navItems, item => {
+      if (this.isFullscreen) {
+        item.classList.add('nav__js--active');
+      } else {
+        item.classList.remove('nav__js--active');
+      }
+    });
+  }
+
+  toggleFullscreen(key) {
+    if (key && key === 'Escape' && !this.isFullscreen) return;
+    if (key && key === 'Enter' && this.isFullscreen) return;
+    this.isFullscreen = !this.isFullscreen;
+    this.toggleNavigation(); // when home__wrapper has translateY position 'fixed' stops following
+
+    const itemContent = this.videoElement.closest('.home__gallery__item__content'); // 'home__gallery__item__content';
+
+    const itemFigure = this.videoElement.closest('.home__gallery__item');
+    const itemVideo = this.videoElement.closest('.home__gallery__item__video');
+
+    if (this.isFullscreen) {
+      itemContent.classList.add('home__gallery__item__content--fullscreen');
+      itemVideo.classList.add('fullscreen');
+      itemFigure.classList.add('dg');
+      itemFigure.classList.add('ac');
+    } else {
+      itemContent.classList.remove('home__gallery__item__content--fullscreen');
+      itemVideo.classList.remove('fullscreen');
+      itemFigure.classList.remove('dg');
+      itemFigure.classList.remove('ac');
+      itemContent.style[this.transformPrefix] = `translateY(0px)`;
+    }
+  }
+
   videoClick(e, fromKey = false) {
+    if (!fromKey) e.preventDefault();
     let videoContainer = null;
     let videoControlsWrapper = null;
 
@@ -11558,6 +12295,13 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
 
       if (e.target.classList.contains('video__controls__wrapper')) {
         videoControlsWrapper = e.target;
+      } else if (e.target.classList.contains('home__gallery__item__video')) {
+        each_default()(e.target.parentElement.children, child => {
+          if (child.classList.contains('video__controls__wrapper')) {
+            videoControlsWrapper = child;
+            return;
+          }
+        });
       } else {
         videoControlsWrapper = e.target.closest('.video__controls__wrapper');
       }
@@ -11575,16 +12319,16 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
       if (child.classList.contains('home__gallery__item__video') && child.nodeName === 'VIDEO') {
         // Toggle Fullscreen
         if (!fromKey && e.target.classList.contains('video__controls--fullscreen')) {
-          if (child.requestFullscreen) {
-            child.requestFullscreen();
-          } else if (child.mozRequestFullScreen) {
-            child.mozRequestFullScreen();
-          } else if (child.webkitRequestFullscreen) {
-            child.webkitRequestFullscreen();
-          } else if (child.msRequestFullscreen) {
-            child.msRequestFullscreen();
-          } // child.requestFullscreen();
-
+          this.toggleFullscreen(); // if (child.requestFullscreen) {
+          //   child.requestFullscreen();
+          // } else if (child.mozRequestFullScreen) {
+          //   child.mozRequestFullScreen();
+          // } else if (child.webkitRequestFullscreen) {
+          //   child.webkitRequestFullscreen();
+          // } else if (child.msRequestFullscreen) {
+          //   child.msRequestFullscreen();
+          // }
+          // child.requestFullscreen();
 
           return;
         }
@@ -11595,6 +12339,7 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
   }
 
   addEventListeners() {
+    this.videoElement.addEventListener('click', e => this.videoClick(e));
     this.videoWrapper.addEventListener('click', e => this.videoClick(e));
     this.videoWrapper.addEventListener('mousemove', e => {
       if (e.target.classList.contains('video__controls__wrapper') && this.isPlaying) {
@@ -11641,15 +12386,19 @@ var prefix_default = /*#__PURE__*/__webpack_require__.n(prefix);
 
 
 
- // @todo make a separate component for each video
-// store the following data inside this component:
-// 1. progress
-// 2. associated playBtn, pauseBtn, fullBtn
-// 3. this.shouldFire for each video separately
-// I think you can keep videoWrapper component theoretically,
-// The problem right now is that the shouldFire is global, and also you have to calculate this videoIndex in a weird way. All these calcualtions can be ignored I think, since each video will get an index assigned on birth, so you can always refer to a particular file.
-// so I think you create video.js component for each video,
-// and then store them in an array at the videoWrapper.js component
+/*
+.home__gallery__item__content
+
+width: 100%;
+height: 100%;
+
+position: fixed;
+width: 100vw;
+height: 100vh;
+top: 0;
+left: 0;
+
+*/
 
 class Video extends Component {
   constructor() {
@@ -11673,7 +12422,6 @@ class Video extends Component {
   }
 
   initMedias() {
-    // Inside video container
     each_default()(this.elements.videoWrapper, (vid, i) => {
       vid.addEventListener('click', e => {
         let videoContainer = e.target.closest('.home__gallery__video__container'); // Play Video
@@ -11711,7 +12459,7 @@ class Video extends Component {
         }
       }); // Now we add new media
 
-      const media = new Media({
+      const media = new Video_Media({
         videoElement: this.elements.videoProgressAndVideos[i][0],
         videoProgress: this.elements.videoProgressAndVideos[i][1],
         videoWrapper: this.elements.videoWrapper[i],
@@ -11724,7 +12472,16 @@ class Video extends Component {
   }
 
   addEventListeners() {
+    // prevents spacebar scrolling
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space' && e.target == document.body) {
+        e.preventDefault();
+      }
+    }); // pauses/plays last video on spacebar
+
     window.addEventListener('keyup', e => {
+      e.preventDefault();
+
       if (e.code === 'Space') {
         // search for a match
         each_default()(this.elements.videoWrapper, (wrapper, i) => {
@@ -11734,33 +12491,35 @@ class Video extends Component {
           }
         });
       }
+
+      if (e.code === 'Escape') {
+        // search for a match
+        each_default()(this.elements.videoWrapper, (wrapper, i) => {
+          if (wrapper.nextSibling === this.targetMedia) {
+            // call video click on match
+            this.medias[i].toggleFullscreen('Escape');
+          }
+        });
+      }
+
+      if (e.code === 'Enter') {
+        // search for a match
+        each_default()(this.elements.videoWrapper, (wrapper, i) => {
+          if (wrapper.nextSibling === this.targetMedia) {
+            // call video click on match
+            this.medias[i].toggleFullscreen('Enter');
+          }
+        });
+      }
     });
   }
 
 }
-;// CONCATENATED MODULE: ./app/components/Navigation/index.js
-// import { text } from 'express';
-
-class Navigation {
-  constructor() {
-    this.element = document.querySelector('.navigation');
-    this.elementWrapper = document.querySelector('.navigation__wrapper');
-  }
-
-  show() {
-    gsapWithCSS.fromTo(this.elementWrapper, {
-      y: '-100%'
-    }, {
-      y: '0%',
-      duration: 1
-    });
-  }
-
-}
-// EXTERNAL MODULE: ./node_modules/lodash/map.js
-var map = __webpack_require__(7976);
-var map_default = /*#__PURE__*/__webpack_require__.n(map);
+// EXTERNAL MODULE: ./node_modules/normalize-wheel/index.js
+var normalize_wheel = __webpack_require__(7320);
+var normalize_wheel_default = /*#__PURE__*/__webpack_require__.n(normalize_wheel);
 ;// CONCATENATED MODULE: ./app/classes/Animation.js
+
 
 class Animation_Animation extends Component {
   constructor({
@@ -11776,15 +12535,39 @@ class Animation_Animation extends Component {
   }
 
   createObserver() {
+    // Special Observer for menu links
+    if (Object.keys(this.elements).length > 0) {
+      this.observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.animateIn(entry.target);
+          } else {
+            this.animateOut(entry.target);
+          }
+        });
+      }, {
+        root: null,
+        threshold: 0.2
+      });
+      each_default()(this.elements, el => {
+        this.observer.observe(el);
+      });
+      return;
+    } // Observer for everything else
+
+
     this.observer = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          this.animateIn();
+          this.animateIn(entry.target);
         } else {
-          this.animateOut();
+          this.animateOut(entry.target);
         }
       });
-    });
+    }); // if (typeof this.element === 'array') {
+    //   console.log('Array');
+    // }
+
     this.observer.observe(this.element);
   }
 
@@ -11919,6 +12702,7 @@ class FadeIn extends Animation_Animation {
 }
 ;// CONCATENATED MODULE: ./app/animations/NavBg.js
 
+
  // import { calculate, split } from 'utils/text';
 
 class NavBg extends Animation_Animation {
@@ -11927,40 +12711,329 @@ class NavBg extends Animation_Animation {
       element,
       elements
     });
-    this.navWrapper = '.navigation__wrapper';
+    this.firstLoad = true;
+    this.navList = document.querySelector('.navigation__list');
+    this.navWrapper = document.querySelector('.navigation__wrapper');
   }
 
-  animateIn() {
-    if (this.isAnimatedIn) return;
+  toggleActiveMenu(target) {
+    each_default()(this.navList.children, child => {
+      child.classList.remove('active');
+    });
+    if (target.classList.contains('home__hero')) this.navList.children[0].classList.add('active');
+    if (target.classList.contains('home__services')) this.navList.children[1].classList.add('active');
+    if (target.classList.contains('home__gallery')) this.navList.children[2].classList.add('active');
+    if (target.classList.contains('home__contact')) this.navList.children[3].classList.add('active');
+  }
+
+  animateIn(target) {
+    if (this.isAnimatedIn) return; // Update Menu code:
+
+    if (target) {
+      this.toggleActiveMenu(target);
+    } //
+
+
     this.isAnimatedIn = true;
     this.timelineIn = gsapWithCSS.timeline({
       onComplete: _ => {
         this.isAnimatedIn = false;
       }
+    }); // GSAP.fromTo(
+    //   '.navigation__wrapper',
+    //   {
+    //     // y: '0%',
+    //     backgroundColor: `rgba(3, 3, 3, 0.2)`,
+    //   },
+    //   {
+    //     // y: '-100%',
+    //     backgroundColor: `rgba(3, 3, 3, 0)`,
+    //     duration: 1,
+    //     ease: 'expo.out',
+    //   }
+    // );
+  }
+
+  animateOut(target) {
+    if (this.isAnimatedIn) return; // if (target) {
+    //   this.toggleActiveMenu(target);
+    // }
+    // GSAP.fromTo(
+    //   '.navigation__wrapper',
+    //   {
+    //     // y: '-100%',
+    //     backgroundColor: `rgba(3, 3, 3, 0)`,
+    //   },
+    //   {
+    //     // y: '0%',
+    //     backgroundColor: `rgba(3, 3, 3, 0.2)`,
+    //     duration: 1,
+    //     ease: 'expo.out',
+    //   }
+    // );
+  }
+
+}
+;// CONCATENATED MODULE: ./app/pages/Home/sections/Services.js
+
+/* harmony default export */ const sections_Services = (class {
+  constructor(scroll) {
+    this.elementWrapper = document.querySelector('.home__services__wrapper');
+    this.elements = document.querySelectorAll('.services__card');
+    this.services = {
+      artDirection: document.getElementById('art-direction')
+    };
+    this.elementsBounds = [];
+    this.boundsReady = false;
+    this.createBounds();
+    this.addEventListeners();
+  }
+
+  createBounds(scroll = 0) {
+    each_default()(this.elements, el => {
+      const bounds = el.getBoundingClientRect();
+      const obj = {
+        left: bounds.left,
+        top: bounds.top + window.pageYOffset + scroll
+      };
+      this.elementsBounds.push(obj);
     });
-    gsapWithCSS.fromTo('.navigation__wrapper', {
-      backgroundColor: `rgba(3, 3, 3, 0.2)`
-    }, {
-      backgroundColor: `rgba(3, 3, 3, 0)`,
-      duration: 1,
-      ease: 'expo.out'
+    this.boundsReady = true;
+  }
+
+  addEventListeners() {// console.log('added listeners');
+    // console.log(this.services.artDirection);
+    // this.services.artDirection.addEventListener('mousemove', (e) => {
+    //   console.log('ad');
+    //   console.log(e.target);
+    // });
+  }
+
+  onResize(scroll) {
+    // reset bounds
+    this.boundsReady = false;
+    this.elementsBounds = [];
+    this.createBounds(scroll);
+  }
+
+  update({
+    clientX,
+    clientY
+  }, current = 0) {
+    if (!this.boundsReady) return;
+    each_default()(this.elements, (el, i) => {
+      const x = clientX - this.elementsBounds[i].left;
+      const y = current - this.elementsBounds[i].top + clientY + window.pageYOffset;
+      el.style.setProperty('--mouse-x', `${x}px`);
+      el.style.setProperty('--mouse-y', `${y}px`);
     });
   }
 
-  animateOut() {
-    if (this.isAnimatedIn) return; // convert HTMLCollection into an array
+});
+;// CONCATENATED MODULE: ./app/utils/utils.js
+// Map number x from range [a, b] to [c, d]
+const utils_map = (x, a, b, c, d) => (x - a) * (d - c) / (b - a) + c; // Linear interpolation
 
-    gsapWithCSS.fromTo('.navigation__wrapper', {
-      backgroundColor: `rgba(3, 3, 3, 0)`
-    }, {
-      backgroundColor: `rgba(3, 3, 3, 0.2)`,
-      duration: 1,
-      ease: 'expo.out'
-    });
+
+const lerp = (a, b, n) => (1 - n) * a + n * b;
+
+const calcWinsize = () => {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+}; // Gets the mouse position
+
+
+const getMousePos = e => {
+  return {
+    x: e.clientX,
+    y: e.clientY
+  };
+};
+
+const distance = (x1, y1, x2, y2) => {
+  var a = x1 - x2;
+  var b = y1 - y2;
+  return Math.hypot(a, b);
+}; // Generate a random float.
+
+
+const getRandomFloat = (min, max) => (Math.random() * (max - min) + min).toFixed(2);
+
+
+;// CONCATENATED MODULE: ./app/components/StickyButton/StickyButton.js
+
+
+ // Calculate the viewport size
+
+let winsize = calcWinsize();
+window.addEventListener('resize', () => winsize = calcWinsize()); // Track the mouse position
+
+let mousepos = {
+  x: 0,
+  y: 0
+};
+window.addEventListener('mousemove', ev => mousepos = getMousePos(ev));
+class StickyButton extends events.EventEmitter {
+  constructor(el) {
+    super(); // DOM elements
+    // el: main button
+    // text: inner text element
+
+    this.scrollCurrent = 0;
+    this.DOM = {
+      el: el
+    };
+    this.DOM.text = this.DOM.el.querySelector('.button__text');
+    this.DOM.textinner = this.DOM.el.querySelector('.button__text-inner');
+    this.DOM.textIconBefore = this.DOM.el.querySelector('.button__text__icon--before');
+    this.DOM.textIconAfter = this.DOM.el.querySelector('.button__text__icon--after');
+    this.DOM.deco = this.DOM.el.querySelector('.button__deco');
+    this.DOM.filler = this.DOM.deco.querySelector('.button__deco-filler'); // amounts the button will translate/scale
+
+    this.renderedStyles = {
+      tx: {
+        previous: 0,
+        current: 0,
+        amt: 0.1
+      },
+      ty: {
+        previous: 0,
+        current: 0,
+        amt: 0.1
+      },
+      scale: {
+        previous: 1,
+        current: 1,
+        amt: 0.2
+      }
+    }; // button state (hover)
+
+    this.state = {
+      hover: false
+    }; // calculate size/position
+
+    this.calculateSizePosition(); // init events
+
+    this.initEvents(); // loop fn
+
+    requestAnimationFrame(() => this.render());
+  }
+
+  calculateSizePosition() {
+    // size/position
+    this.rect = this.DOM.el.getBoundingClientRect(); // the movement will take place when the distance from the mouse to the center of the button is lower than this value
+
+    this.distanceToTrigger = this.rect.width * 1.5;
+  }
+
+  initEvents() {
+    this.onResize = () => this.calculateSizePosition();
+
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+  }
+
+  update({
+    current
+  }) {
+    this.scrollCurrent = current;
+  }
+
+  render() {
+    // calculate the distance from the mouse to the center of the button
+    const distanceMouseButton = distance(mousepos.x + window.scrollX, mousepos.y + this.scrollCurrent, this.rect.left + this.rect.width / 2, this.rect.top + this.rect.height / 2); // new values for the translations and scale
+
+    let x = 0;
+    let y = 0;
+
+    if (distanceMouseButton < this.distanceToTrigger) {
+      if (!this.state.hover) {
+        this.enter();
+      }
+
+      x = (mousepos.x + window.scrollX - (this.rect.left + this.rect.width / 2)) * 0.3;
+      y = (mousepos.y + this.scrollCurrent - (this.rect.top + this.rect.height / 2)) * 0.3;
+    } else if (this.state.hover) {
+      this.leave();
+    }
+
+    this.renderedStyles['tx'].current = x;
+    this.renderedStyles['ty'].current = y;
+
+    for (const key in this.renderedStyles) {
+      this.renderedStyles[key].previous = lerp(this.renderedStyles[key].previous, this.renderedStyles[key].current, this.renderedStyles[key].amt);
+    }
+
+    this.DOM.el.style.transform = `translate3d(${this.renderedStyles['tx'].previous}px, ${this.renderedStyles['ty'].previous}px, 0)`;
+    this.DOM.text.style.transform = `translate3d(${-this.renderedStyles['tx'].previous * 0.2}px, ${-this.renderedStyles['ty'].previous * 0.2}px, 0)`;
+    this.DOM.deco.style.transform = `scale(${this.renderedStyles['scale'].previous})`;
+    requestAnimationFrame(() => this.render());
+  }
+
+  enter() {
+    this.emit('enter');
+    this.state.hover = true;
+    this.DOM.el.classList.add('button--hover');
+    this.renderedStyles['scale'].current = 1.3;
+    gsapWithCSS.killTweensOf(this.DOM.filler);
+    gsapWithCSS.killTweensOf(this.DOM.textinner);
+    gsapWithCSS.killTweensOf(document.body);
+    gsapWithCSS.timeline().to(this.DOM.filler, 0.5, {
+      ease: 'Power3.easeOut',
+      startAt: {
+        y: '0%'
+      },
+      y: '-100%'
+    }, 0).to(this.DOM.textinner, 0.4, {
+      ease: 'Expo.easeOut',
+      scale: 0.8
+    }, 0).to(this.DOM.textIconBefore, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '600%',
+      scale: 0
+    }, 0).to(this.DOM.textIconAfter, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '0%',
+      scale: 1
+    }, 0).to(this.DOM.deco, 0, {
+      ease: 'Expo.easeOut',
+      borderColor: 'rgba(var(--data-color-link), 0.8)'
+    }, 0);
+  }
+
+  leave() {
+    this.emit('leave');
+    this.state.hover = false;
+    this.DOM.el.classList.remove('button--hover');
+    this.renderedStyles['scale'].current = 1;
+    gsapWithCSS.killTweensOf(document.body);
+    gsapWithCSS.killTweensOf(this.DOM.filler);
+    gsapWithCSS.timeline().to(this.DOM.filler, 0.4, {
+      ease: 'Power3.easeOut',
+      y: '0%'
+    }, 0).to(this.DOM.textinner, 0.4, {
+      ease: 'Expo.easeOut',
+      scale: 1
+    }, 0).to(this.DOM.textIconBefore, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '0%',
+      scale: 1
+    }, 0).to(this.DOM.textIconAfter, 1.2, {
+      ease: 'Expo.easeOut',
+      y: '-600%',
+      scale: 0
+    }, 0).to(this.DOM.deco, 0, {
+      ease: 'Expo.easeOut',
+      borderColor: 'rgba(var(--data-color-secondary), 0.8)'
+    }, 0);
   }
 
 }
 ;// CONCATENATED MODULE: ./app/classes/Page.js
+
+
 
 
 
@@ -11981,7 +13054,7 @@ class Page {
       animationsFade: '[data-animation="fade"]',
       animationsFloating: '[data-animation="floating"]',
       animationsNav: '.navigation',
-      animationsNavTrigger: '.home__hero',
+      animationsNavTrigger: ['.home__hero', '.home__services', '.home__gallery', '.home__contact'],
       preloaders: '[data-src]'
     };
     this.id = id;
@@ -12008,47 +13081,11 @@ class Page {
     };
     this.isResizing = false;
     this.mediaMobile = false;
+    window.locked = true; // used for scrolling
+
     this.isDown = false;
     this.onWheelEvent = this.onWheel.bind(this);
-  }
-
-  createNavigation() {
-    const activateLink = selector => {
-      each_default()(selector, link => {
-        const href = link.href;
-        const linkNaming = href.split('#')[1];
-        link.addEventListener('click', e => {
-          e.preventDefault();
-          const target = document.getElementById(`${linkNaming}`);
-
-          if (this.mediaMobile) {
-            const posY = target.getBoundingClientRect().y + window.pageYOffset;
-            window.scrollTo({
-              top: posY,
-              behavior: 'smooth'
-            });
-          } else {
-            this.scroll.target += target.getBoundingClientRect().y;
-          }
-        });
-      });
-    };
-
-    activateLink(this.selectorChildren.footerLinks);
-    activateLink(this.selectorChildren.navigationLinks); // logo
-
-    this.selectorChildren.navigationLogo.addEventListener('click', e => {
-      e.preventDefault();
-
-      if (this.mediaMobile) {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      } else {
-        this.scroll.target = 0;
-      }
-    });
+    this.stickyButton = new StickyButton(document.querySelector('.button'));
   }
 
   create() {
@@ -12076,22 +13113,63 @@ class Page {
       }
     });
     this.createAnimations();
-  }
+  } // called from Home.js after the create methods
 
-  checkMedia() {
-    if (this.media.matches && !this.mediaMobile) {
-      // mobile
-      window.scrollTo(0, 0);
-      this.mediaMobile = true;
-    }
 
-    if (!this.media.matches && this.mediaMobile) {
-      // desktop
-      this.mediaMobile = false;
-      this.scroll.target = 0;
-      window.scrollTo(0, 0);
-    }
+  createNavigation() {
+    const activateLink = selector => {
+      each_default()(selector, link => {
+        const href = link.href;
+        const linkNaming = href.split('#')[1];
+        link.addEventListener('click', e => {
+          e.preventDefault(); // Lock screen when navigating to the hero section
+
+          const target = document.getElementById(`${linkNaming}`);
+
+          if (this.mediaMobile) {
+            const posY = target.getBoundingClientRect().y + window.pageYOffset;
+            this.scroll = {
+              current: 0,
+              target: 0,
+              last: 0,
+              limit: 1000
+            };
+            window.scrollTo({
+              top: posY,
+              behavior: 'smooth'
+            });
+          } else {
+            this.scroll.target += target.getBoundingClientRect().y;
+          }
+        });
+      });
+    };
+
+    activateLink(this.selectorChildren.footerLinks);
+    activateLink(this.selectorChildren.navigationLinks); // logo
+    // this.selectorChildren.navigationLogo.addEventListener('click', (e) => {
+    //   e.preventDefault();
+    //   if (this.mediaMobile) {
+    //     window.scrollTo({
+    //       top: 0,
+    //       behavior: 'smooth',
+    //     });
+    //   } else {
+    //     this.scroll.target = 0;
+    //   }
+    // });
+  } // called from Home.js after the create methods
+
+
+  createServices() {
+    this.services = new sections_Services();
   }
+  /*
+   **  ------
+   **  ANIMATIONS
+   **  ------
+   */
+
 
   createAnimations() {
     this.animationsParagraphs = map_default()(this.elements.animationsParagraphs, element => {
@@ -12106,107 +13184,7 @@ class Page {
       });
     }
 
-    this.animationsNav = new NavBg(this.elements.animationsNavTrigger);
-  }
-
-  hide() {
-    return new Promise(resolve => {
-      this.destroy();
-      this.removeEventListeners();
-      this.animationOut = gsapWithCSS.timeline();
-      this.animationOut.to(this.element, {
-        autoAlpha: 0,
-        onComplete: resolve
-      });
-    });
-  } // Events
-
-
-  onWheel(event) {
-    if (!event) return;
-    const {
-      pixelY
-    } = normalize_wheel_default()(event);
-    this.scroll.target += pixelY;
-  }
-
-  onResize(e) {
-    this.isResizing = true;
-
-    if (this.hero && this.hero.onResize) {
-      this.hero.onResize(e);
-    }
-
-    if (this.element && this.element.classList.contains('home')) {
-      // Resizing homepage, if it's mobile device we set the Height to match mobile viewport
-      if (this.media.matches) {
-        this.mediaHeight.current = window.innerHeight;
-
-        if (this.mediaHeight.previous === 0) {
-          this.mediaHeight.previous = window.innerHeight;
-        }
-
-        if (this.mediaHeight.current === this.mediaHeight.previous) {
-          document.querySelector('.home__hero').style.height = `${this.mediaHeight.current}px`;
-        } else {
-          const percent = this.mediaHeight.current / this.mediaHeight.previous; // if the difference is 20% change height
-
-          if (percent <= 0.8 || percent >= 1.2) {
-            this.mediaHeight.previous = window.innerHeight;
-            document.querySelector('.home__hero').style.height = `${this.mediaHeight.previous}px`;
-          }
-        }
-      } else {
-        document.querySelector('.home__hero').style.height = `100vh`;
-      }
-    }
-
-    if (this.elements.wrapper) {
-      this.scroll.limit = this.elements.wrapper.clientHeight - window.innerHeight; // sets target scroll based on scroll %%
-      // prettier-ignore
-
-      const diff = this.scroll.limit - (this.scroll.limit - this.scroll.limit * this.scroll.percent / 100);
-      if (diff) this.scroll.target = diff;else this.scroll.target = 0;
-      this.checkMedia();
-
-      if (this.mediaMobile) {
-        this.scroll.target = 0;
-      }
-
-      this.isResizing = false;
-    }
-  } // Loop
-
-
-  update() {
-    if (!this.scroll) return;
-    this.scroll.target = gsapWithCSS.utils.clamp(0, this.scroll.limit, this.scroll.target);
-    this.scroll.current = gsapWithCSS.utils.interpolate(this.scroll.current, this.scroll.target, 0.1);
-
-    if (this.scroll.current < 0.01) {
-      this.scroll.current = 0;
-    }
-
-    this.scroll.last = this.scroll.current.toFixed(); // Update translateY only if the movement is actually made
-
-    if (this.scroll.current.toFixed() != this.scroll.target) {
-      if (this.elements.wrapper) {
-        this.elements.wrapper.style[this.transformPrefix] = `translateY(-${this.scroll.current.toFixed()}px)`;
-      }
-
-      if (this.elements.scrollbar && !this.isResizing) {
-        this.scroll.percent = this.scroll.current / this.scroll.limit * 100; // round
-
-        if (this.scroll.percent < 0.1) this.scroll.percent = 0;
-        if (this.scroll.percent > 99.7) this.scroll.percent = 100;
-        this.elements.scrollbar.style[this.transformPrefix] = `translateY(${this.scroll.percent}%)`;
-      }
-    }
-  }
-
-  addEventListeners() {}
-
-  removeEventListeners() {// window.removeEventListener('mousewheel', this.onWheelEvent);
+    this.animationsNav = new NavBg(this.elements.animationsNavTrigger, this.elements.animationsNavTrigger);
   }
 
   show(animation) {
@@ -12241,6 +13219,193 @@ class Page {
       });
     });
   }
+  /*
+   **  ------
+   **  EVENTS
+   **  ------
+   */
+
+
+  checkMedia() {
+    if (window.matchMedia('(max-width: 1024px)').matches && !this.mediaMobile) {
+      // mobile
+      window.scrollTo(0, this.scroll.current);
+      this.scroll.target = 0;
+      this.scroll.current = 0;
+      this.mediaMobile = true;
+      this.elements.wrapper.style[this.transformPrefix] = `translateY(0px)`;
+    }
+
+    if (!window.matchMedia('(max-width: 1024px)').matches && this.mediaMobile) {
+      // desktop
+      this.mediaMobile = false;
+      this.scroll.current = window.pageYOffset;
+      this.scroll.target = window.pageYOffset;
+      this.elements.wrapper.style[this.transformPrefix] = `translateY(-${this.scroll.current}px)`;
+      window.scrollTo(0, 0);
+    }
+  }
+
+  onWheel(event) {
+    if (!event) return;
+
+    if (!window.locked) {
+      const {
+        pixelY
+      } = normalize_wheel_default()(event);
+      this.scroll.target += pixelY;
+    }
+  }
+
+  onResize(e) {
+    this.isResizing = true;
+
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize(e);
+    }
+
+    if (this.button && this.button.onResize) {
+      this.button.onResize();
+    }
+
+    if (this.elements.wrapper) {
+      this.scroll.limit = this.elements.wrapper.clientHeight - window.innerHeight; // sets target scroll based on scroll %%
+      // prettier-ignore
+
+      const diff = this.scroll.limit - (this.scroll.limit - this.scroll.limit * this.scroll.percent / 100);
+      if (diff) this.scroll.target = diff; // else this.scroll.target = 0;
+
+      this.checkMedia();
+      this.isResizing = false;
+    }
+
+    if (this.services && this.services.onResize) {
+      this.services.onResize(this.scroll.current);
+    }
+
+    if (this.element && this.element.classList.contains('home')) {
+      this.boundaries = {
+        hero: document.querySelector('.home__hero').getBoundingClientRect(),
+        services: document.querySelector('.home__services').getBoundingClientRect(),
+        projects: document.querySelector('.home__gallery').getBoundingClientRect(),
+        contact: document.querySelector('.home__contact').getBoundingClientRect()
+      }; // if it's mobile device we set the Height to match mobile viewport, else 100vh
+
+      if (!this.media.matches) {
+        document.querySelector('.home__hero').style.height = `100vh`;
+        return;
+      }
+
+      this.mediaHeight.current = window.innerHeight;
+
+      if (this.mediaHeight.previous === 0) {
+        this.mediaHeight.previous = window.innerHeight;
+      }
+
+      if (this.mediaHeight.current === this.mediaHeight.previous) {
+        document.querySelector('.home__hero').style.height = `${this.mediaHeight.current}px`;
+      } else {
+        const percent = this.mediaHeight.current / this.mediaHeight.previous; // if the difference is 20% change height
+
+        if (percent <= 0.8 || percent >= 1.2) {
+          this.mediaHeight.previous = window.innerHeight;
+          document.querySelector('.home__hero').style.height = `${this.mediaHeight.previous}px`;
+        }
+      }
+    }
+  }
+  /*
+   **  ------
+   **   LOOP
+   **  ------
+   */
+
+
+  update() {
+    if (!this.scroll || this.mediaMobile) return;
+    this.scroll.target = gsapWithCSS.utils.clamp(0, this.scroll.limit, this.scroll.target);
+    this.scroll.current = gsapWithCSS.utils.interpolate(this.scroll.current, this.scroll.target, 0.1);
+
+    if (this.scroll.current < 0.01) {
+      this.scroll.current = 0;
+    } // if (this.boundaries) {
+    //   console.log(
+    //     this.boundaries.services.top - this.boundaries.services.top * 0.3
+    //   );
+    // }
+
+
+    if (!window.locked && this.boundaries && this.scroll.current < this.boundaries.services.top - this.boundaries.services.top * 0.3) {
+      window.locked = true;
+      this.scroll.target = 0;
+    }
+
+    if (window.locked && this.boundaries && this.scroll.current >= this.boundaries.services.top - 10) {
+      window.locked = false;
+    }
+
+    this.scroll.last = this.scroll.current.toFixed(); // Update translateY only if the movement is actually made
+
+    if (this.scroll.current.toFixed() != this.scroll.target) {
+      if (this.elements.wrapper) {
+        this.elements.wrapper.style[this.transformPrefix] = `translateY(-${this.scroll.current.toFixed()}px)`;
+      }
+
+      if (this.elements.scrollbar && !this.isResizing) {
+        this.scroll.percent = this.scroll.current / this.scroll.limit * 100; // round
+
+        if (this.scroll.percent < 0.1) this.scroll.percent = 0;
+        if (this.scroll.percent > 99.7) this.scroll.percent = 100;
+        this.elements.scrollbar.style[this.transformPrefix] = `translateY(${this.scroll.percent}%)`;
+      }
+    }
+
+    const playingVid = document.querySelector('.home__gallery__item__content--fullscreen');
+
+    if (playingVid && !this.isResizing) {
+      playingVid.style[this.transformPrefix] = `translateY(${this.scroll.current.toFixed()}px)`;
+    }
+
+    if (this.stickyButton && this.stickyButton.update) {
+      this.stickyButton.update(this.scroll);
+    }
+  }
+  /*
+   **  ------
+   **  LISTENERS
+   **  ------
+   */
+
+
+  addEventListeners() {
+    // const allServicesCards = document.querySelectorAll('.services__card');
+    // const allServices = document.querySelectorAll('.services__card__content');
+    // each(allServicesCards, (card) => {
+    //   card.addEventListener('mousemove', (e) => {
+    //     console.log(e.target);
+    //   });
+    // });
+    // add both to array affect element with the same [i] on hover
+    document.querySelector('.button').addEventListener('click', () => {
+      this.scroll.target = this.boundaries.services.top;
+    });
+    document.querySelector('.home__services__wrapper').addEventListener('mousemove', e => {
+      const mousePos = {
+        clientX: e.clientX,
+        clientY: e.clientY
+      };
+      this.services.update(mousePos, this.scroll.current);
+    });
+  }
+
+  removeEventListeners() {// window.removeEventListener('mousewheel', this.onWheelEvent);
+  }
+  /*
+   **  ------
+   **  DESTROY
+   **  ------
+   */
+
 
   destroy() {
     this.removeEventListeners();
@@ -12393,7 +13558,7 @@ class Modal extends Component {
     this.textContainer = document.createElement('DIV');
     this.textContainer.classList.add('loader__container');
     this.loader.appendChild(this.textContainer);
-    const htmlCode = `<p class="loader__text">This is an early version of this website. The website is fully open-source! You can find the source code on my <a class="footer__list__link" href='https://github.com/chrisaveryano' target="_blank">Github</a>. If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
+    const htmlCode = `<p class="loader__text">If you'd like me to develop a website for you, make sure to connect via email <a class="footer__list__link" target="_blank" href="mailto:chris@averyano.com">chris@averyano.com</a></p>
     <br>
     - Chris Averyano`;
     this.textContainer.insertAdjacentHTML('afterbegin', htmlCode);
@@ -12428,7 +13593,7 @@ class Modal extends Component {
         y: '0%'
       });
     }, true);
-    this.loader.style.transform = `translate(0%, 0%)`;
+    this.loader.style.opacity = 1;
   }
 
   hideModal() {
@@ -12437,7 +13602,7 @@ class Modal extends Component {
     });
     this.timelineIn.fromTo(this.textContainer, {
       autoAlpha: 1,
-      x: '0%'
+      y: '0%'
     }, {
       // delay: 1 * 0.2,
       autoAlpha: 0,
@@ -12447,13 +13612,13 @@ class Modal extends Component {
         amount: 0.5,
         axis: 'x'
       },
-      x: '100%'
+      y: '-100%'
     }, 0);
     this.loader.addEventListener('transitionend', () => {
       this.isCreating = false;
       this.loader.remove();
     }, true);
-    this.loader.style.transform = `translate(100%, 0%)`;
+    this.loader.style.opacity = 0;
   }
 
 }
@@ -12481,7 +13646,6 @@ class Circle {
   }
 
   stopAnimating() {
-    console.log('stopAnimating');
     this.isAnimating = false;
   }
 
@@ -12563,73 +13727,303 @@ class Contact extends Component {
   removeEventListeners() {}
 
 }
+;// CONCATENATED MODULE: ./app/classes/Colors.js
+class Colors {
+  constructor() {
+    this.monitorsDark = document.querySelectorAll('.services__optimized__dev__image--offdark');
+    this.monitorsLight = document.querySelectorAll('.services__optimized__dev__image--offlight');
+  }
+
+  change({
+    backgroundColor,
+    color,
+    transparent,
+    brightnessOn,
+    brightnessOff,
+    linkColor,
+    servicesBgColor,
+    servicesElColor
+  }) {
+    // if LightMode
+    if (color === '0,0,0') {
+      [...this.monitorsDark].map(el => el.style.opacity = 0);
+      [...this.monitorsLight].map(el => el.style.opacity = 1);
+    } else {
+      // if DarkMode
+      [...this.monitorsDark].map(el => el.style.opacity = 1);
+      [...this.monitorsLight].map(el => el.style.opacity = 0);
+    }
+
+    document.documentElement.style.setProperty('--data-color-primary', color); // document.documentElement.style.setProperty('--data-color-link', linkColor);
+
+    document.documentElement.style.setProperty('--data-color-servicesel', servicesElColor);
+    document.documentElement.style.setProperty('--data-color-servicesbg', servicesBgColor);
+    document.documentElement.style.setProperty('--data-color-brightness-on', brightnessOn);
+    document.documentElement.style.setProperty('--data-color-brightness-off', brightnessOff);
+    document.documentElement.style.setProperty('--data-color-transparent', transparent);
+    document.documentElement.style.setProperty('--data-color-secondary', backgroundColor);
+  }
+
+}
+
+const ColorsManager = new Colors();
 ;// CONCATENATED MODULE: ./app/pages/Home/sections/Hero.js
 
 
 
-class Hero extends Component {
-  constructor({
-    heroBanner,
-    heroImages
-  }) {
-    super({
-      element: '.home__hero',
-      elements: {
-        heroBanner: heroBanner,
-        heroImages: heroImages
-      }
-    });
-    this.heroGrid = document.querySelector('.hero__grid');
-    this.heroGridWrapper = document.querySelector('.hero__grid__wrapper');
+class Hero_Hero {
+  constructor() {
+    this.isVisible = true;
+    this.wrapper = {
+      element: document.querySelector('.home__hero__wrapper'),
+      width: 0,
+      height: 0
+    };
+    this.arrow = {
+      element: document.querySelector('.home__hero__left__hide'),
+      icon: document.querySelector('.home__hero__hide__arrow'),
+      width: 0,
+      height: 0
+    };
+    this.switchState = 'on';
+    this.switchBtn = document.querySelector('.hero__switch__container');
+    this.heroLogo = document.getElementById('hero__avlogo');
+    this.timeline = gsapWithCSS.timeline(this.wrapper.element, {
+      x: '-100%'
+    }, {
+      x: '0%',
+      duration: 1
+    }, 1);
+    this.addEventListeners(); // if (
+    //   window.matchMedia &&
+    //   window.matchMedia('(prefers-color-scheme: light)').matches
+    // ) {
+    //   this.switchState = 'off';
+    //   this.changeColor(this.switchState);
+    // }
+    // if (
+    //   window.matchMedia &&
+    //   window.matchMedia('(prefers-color-scheme: dark)').matches
+    // )
+    //   this.switchState = 'on';
   }
 
   create() {}
 
-  showHero(isMobile) {
-    return new Promise(resolve => {
-      this.animationIn = gsapWithCSS.timeline();
-      each_default()(this.selectorChildren.heroImages, (image, i) => {
-        this.animationIn.fromTo(image, {
-          scale: 0,
-          autoAlpha: 0
-        }, {
-          scale: 1,
-          autoAlpha: 1,
-          duration: 2.2,
-          delay: i * 0.15,
-          ease: 'expo.out'
-        }, 0);
+  show() {
+    // if coming from resize, change instantly
+    if (this.isVisible) {
+      gsapWithCSS.set(this.wrapper.element, {
+        x: `${this.wrapper.width - this.wrapper.width}px`
       });
 
-      if (!isMobile) {
-        gsapWithCSS.fromTo(this.selectorChildren.heroBanner, {
-          x: '-100%',
-          autoAlpha: 0
-        }, {
-          x: '0%',
-          autoAlpha: 1,
-          duration: 1
-        });
+      if (this.isMobile) {
+        gsapWithCSS.set(this.arrow.icon, {
+          rotate: '270deg'
+        }); // GSAP.set(this.switchBtn {
+        //   rotate: '0deg',
+        // });
       } else {
-        gsapWithCSS.fromTo(this.selectorChildren.heroBanner, {
-          y: '100%',
-          autoAlpha: 0
-        }, {
-          y: '0%',
-          autoAlpha: 1,
-          duration: 1
+        gsapWithCSS.set(this.arrow.icon, {
+          rotate: '0deg'
         });
       }
 
-      this.animationIn.call(_ => {
-        resolve();
+      return;
+    } // Animation
+    // Desktop version
+
+
+    if (!this.isMobile) {
+      gsapWithCSS.fromTo(this.wrapper.element, {
+        x: `${0 - this.wrapper.width + this.arrow.width}px`
+      }, {
+        x: `${0}px`,
+        duration: 0.7
       });
+      gsapWithCSS.fromTo(this.arrow.icon, {
+        rotate: '180deg'
+      }, {
+        rotate: '0deg',
+        duration: 0.3
+      });
+      gsapWithCSS.fromTo(this.switchBtn, {
+        rotate: '90deg',
+        x: `${0 + this.wrapper.width - this.arrow.width * 1.58}`
+      }, {
+        rotate: '0deg',
+        x: `${0}px`,
+        duration: 0.7
+      });
+    } // Mobile version
+
+
+    if (this.isMobile) {
+      gsapWithCSS.fromTo(this.wrapper.element, {
+        y: `${0 + this.wrapper.height - this.arrow.height}px`
+      }, {
+        y: `${0}px`,
+        duration: 0.7
+      });
+      gsapWithCSS.fromTo(this.arrow.icon, {
+        rotate: '90deg'
+      }, {
+        rotate: '270deg',
+        duration: 0.3
+      });
+    }
+
+    this.isVisible = true;
+    document.documentElement.classList.remove('refresh');
+  }
+
+  hide() {
+    // if coming from resize, change instantly
+    if (!this.isVisible) {
+      // Desktop
+      if (!this.isMobile) {
+        gsapWithCSS.set(this.wrapper.element, {
+          x: `${0 - this.wrapper.width + this.arrow.width}px`,
+          y: 0
+        });
+        gsapWithCSS.set(this.arrow.icon, {
+          rotate: '180deg'
+        });
+        gsapWithCSS.set(this.switchBtn, {
+          x: `${this.wrapper.width - convertRemToPixels(3) - this.arrow.width - 4}`,
+          rotate: '90deg'
+        });
+      } // Mobile
+
+
+      if (this.isMobile) {
+        gsapWithCSS.set(this.wrapper.element, {
+          x: 0,
+          y: `${0 + this.wrapper.height - this.arrow.height}px`
+        });
+        gsapWithCSS.set(this.arrow.icon, {
+          rotate: '90deg'
+        });
+        gsapWithCSS.set(this.switchBtn, {
+          x: 0,
+          rotate: '0deg'
+        });
+      }
+
+      return;
+    }
+
+    function convertRemToPixels(rem) {
+      return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    } // Animation
+    // Desktop
+
+
+    if (!this.isMobile) {
+      gsapWithCSS.fromTo(this.wrapper.element, {
+        x: `${0}px`
+      }, {
+        x: `${0 - this.wrapper.width + this.arrow.width}px`,
+        duration: 0.7
+      });
+      gsapWithCSS.fromTo(this.arrow.icon, {
+        rotate: '0deg'
+      }, {
+        rotate: '180deg',
+        duration: 0.3
+      });
+      gsapWithCSS.fromTo(this.switchBtn, {
+        rotate: '0deg',
+        x: `${0}px`
+      }, {
+        rotate: '90deg',
+        x: `${this.wrapper.width - convertRemToPixels(3) - this.arrow.width - 4}`,
+        duration: 0.3
+      });
+    } else {
+      gsapWithCSS.fromTo(this.wrapper.element, {
+        y: `${0}px`
+      }, {
+        y: `${0 + this.wrapper.height - this.arrow.height}px`,
+        duration: 0.7
+      });
+      gsapWithCSS.fromTo(this.arrow.icon, {
+        rotate: '270deg'
+      }, {
+        rotate: '90deg',
+        duration: 0.3
+      });
+    }
+
+    this.isVisible = false;
+    document.documentElement.classList.add('refresh');
+  }
+
+  changeColor(state) {
+    return new Promise(resolve => {
+      if (state === 'on') {
+        // Dark mode
+        ColorsManager.change({
+          color: '245, 239, 225',
+          backgroundColor: '1,1,1',
+          transparent: '1,1,1,0.9',
+          brightnessOn: '1',
+          brightnessOff: '0.8',
+          // linkColor: '196, 113, 237',
+          servicesBgColor: '23, 23, 23',
+          servicesElColor: '39, 39, 39'
+        });
+        this.heroLogo.style.filter = `brightness(1)`;
+      } else {
+        // Light mode
+        ColorsManager.change({
+          color: '0,0,0',
+          backgroundColor: '255,255,255',
+          transparent: '255,255,255,0.9',
+          brightnessOn: '0.95',
+          brightnessOff: '1',
+          // linkColor: '196, 113, 237',
+          servicesBgColor: '250, 250, 250',
+          servicesElColor: '199, 199, 199' // linkColor: '247, 121, 125',
+
+        });
+        this.heroLogo.style.filter = `brightness(0)`;
+      }
     });
   }
 
-  addEventListeners() {}
+  addEventListeners() {
+    this.arrow.element.addEventListener('click', e => {
+      if (this.isVisible) this.hide();else this.show();
+    });
+    this.switchBtn.addEventListener('click', e => {
+      if (e.target.value === 'on') {
+        e.target.value = 'off';
+      } else {
+        e.target.value = 'on';
+      }
+
+      this.switchState = this.switchState === 'on' ? 'off' : 'on';
+      this.changeColor(this.switchState);
+    });
+  }
 
   removeEventListeners() {}
+
+  getBounds() {
+    this.bounds = this.wrapper.element.getBoundingClientRect();
+    this.wrapper['width'] = this.bounds.width;
+    this.wrapper['height'] = this.bounds.height;
+    this.bounds = this.arrow.element.getBoundingClientRect();
+    this.arrow['width'] = this.bounds.width;
+    this.arrow['height'] = this.bounds.height;
+  }
+
+  onResize(isMobile) {
+    this.isMobile = isMobile;
+    this.getBounds();
+    if (this.isVisible) this.show();else this.hide();
+  }
 
   update() {}
 
@@ -12662,24 +14056,31 @@ class Home extends Page {
   create() {
     super.create();
     super.createNavigation();
+    super.createServices();
+    this.media = window.matchMedia('(max-width: 768px)');
+    this.isMobile = !this.media.matches ? false : true;
     this.createContact();
     this.createHero();
+  }
+
+  createHero() {
+    this.hero = new Hero_Hero();
   }
 
   createContact() {
     this.contact = new Contact();
   }
 
-  createHero() {
-    this.hero = new Hero({
-      heroBanner: this.elements.heroBanner,
-      heroImages: this.elements.heroImages
-    });
+  createServices() {
+    this.services = new Services();
   }
 
-  showHero(isMobile) {
-    if (this.hero && this.hero.showHero) {
-      this.hero.showHero(isMobile);
+  onResize() {
+    super.onResize();
+    this.isMobile = !this.media.matches ? false : true;
+
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize(this.isMobile);
     }
   }
 
@@ -12710,18 +14111,20 @@ class Home extends Page {
 
 class App {
   constructor() {
-    console.log('v1.07');
+    const version = 'v1.0.9';
+    console.log(version);
     console.log('%c AV', 'font-weight: bold; font-size: 50px; text-shadow: 1.5px 1.5px 0 #f7797d , 3px 3px 0 #c471ed; padding: 10px 10px 10px 0px; margin-left: -20px;');
-    window.scrollTo(0, 0);
     this.checkMedia();
     this.createContent();
     this.createPreloader();
-    this.createVideo();
-    this.createNavigation();
+    this.createVideo(); // this.createNavigation();
+
     this.createPages();
     this.update();
-    this.onResize();
-    this.onWheel();
+    this.onResize(); // this.onWheel();
+    // this.onTouchDown();
+    // this.onTouchUp();
+    // this.onTouchMove();
   }
 
   checkMedia() {
@@ -12759,37 +14162,79 @@ class App {
 
 
   onWheel(event) {
-    if (this.page && this.page.onWheel && !this.media.matches) {
-      this.page.onWheel(event);
+    // event.preventDefault();
+    if (event.target.classList.contains('hero__gallery') || event.target.classList.contains('hero__gallery__media')) {
+      if (this.gallery && this.gallery.onWheel) {
+        this.gallery.onWheel(event);
+        this.gallery.onTouchUp();
+      }
+    } else {
+      if (this.page && this.page.onWheel && !this.media.matches) {
+        this.page.onWheel(event);
+      }
     }
   }
 
   onPreloaded() {
     this.preloader.destroy();
+    window.scrollTo(0, 0);
     this.onResize();
+    this.addEventListeners();
 
     if (this.page && this.page.show) {
-      this.page.show(); // homepage hero
-
-      if (this.template === 'home') {
-        const media = window.matchMedia('(max-width: 768px)');
-        const isMobile = !media.matches ? false : true;
-        this.page.showHero(isMobile);
-      }
+      this.page.show();
+      this.gallery = new Gallery(this.template);
     }
 
     if (this.navigation && this.navigation.show) {
       this.navigation.show();
     }
-
-    this.addEventListeners();
   }
 
-  onResize(e) {
+  onTouchDown(e) {
+    this.startY = e && e.touches ? e.touches[0].pageY : 0;
+
+    if (this.gallery && this.gallery.onTouchDown) {
+      this.gallery.onTouchDown(e);
+    }
+  }
+
+  onTouchMove(e) {
+    if (this.startY && e) {
+      this.currentY = e.touches ? e.touches[0].pageY : 0; // Activate custom pull-to-refresh effects when at the top of the container
+      // and user is scrolling up.
+
+      if (document.scrollingElement.scrollTop === 0 && this.currentY > this.startY && !document.body.classList.contains('refresh')) {
+        document.body.classList.add('refresh'); // refresh inbox.
+      } else if (!document.scrollingElement.scrollTop === 0 && this.currentY < this.startY) {
+        document.body.classList.remove('refresh');
+      }
+    }
+
+    if (this.gallery && this.gallery.onTouchMove) {
+      this.gallery.onTouchMove(e);
+    }
+  }
+
+  onTouchUp(e) {
+    if (this.gallery && this.gallery.onTouchUp) {
+      this.gallery.onTouchUp(e);
+    }
+  }
+
+  onResize() {
     this.checkMedia();
 
     if (this.page && this.page.onResize) {
-      this.page.onResize(e);
+      this.page.onResize();
+    }
+
+    if (this.gallery && this.gallery.checkMobile) {
+      this.gallery.checkMobile();
+    }
+
+    if (this.gallery && this.gallery.onResize) {
+      this.gallery.onResize();
     }
   }
   /***
@@ -12802,6 +14247,10 @@ class App {
       this.page.update();
     }
 
+    if (this.gallery && this.gallery.update) {
+      this.gallery.update();
+    }
+
     if (this.video && this.video.update) {
       this.video.update();
     }
@@ -12810,7 +14259,13 @@ class App {
   }
 
   addEventListeners() {
-    window.addEventListener('mousewheel', this.onWheel.bind(this)); // popstate for routing
+    window.addEventListener('mousewheel', this.onWheel.bind(this));
+    window.addEventListener('mousedown', this.onTouchDown.bind(this));
+    window.addEventListener('mousemove', this.onTouchMove.bind(this));
+    window.addEventListener('mouseup', this.onTouchUp.bind(this));
+    window.addEventListener('touchstart', this.onTouchDown.bind(this));
+    window.addEventListener('touchmove', this.onTouchMove.bind(this));
+    window.addEventListener('touchend', this.onTouchUp.bind(this)); // popstate for routing
     // window.addEventListener('popstate', this.onPopState.bind(this));
 
     window.addEventListener('resize', this.onResize.bind(this));

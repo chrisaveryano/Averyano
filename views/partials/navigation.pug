@@ -4,11 +4,15 @@ nav.navigation
 		.scroll__nav__bg
 	.navigation__wrapper 
 		ul.navigation__list
-			li.navigation__list__item.navigation__list__item--logo 
-				.navigation__list__link--logo
-					a(href='#')
-						img(data-src="./images/av-350px-white.png" alt="Chris Averyano" title="Chris Averyano")
+			//- li.navigation__list__item.navigation__list__item--logo 
+			//- 	.navigation__list__link--logo
+			//- 		a.nav__js(href='#')
+			//- 			img(data-src="./images/av-350px-white.png" alt="Chris Averyano" title="Chris Averyano")
+			li.navigation__list__item.active 
+				a.navigation__list__link.nav__js(href='#home')='Designs'
 			li.navigation__list__item 
-				a.navigation__list__link(href='#projects')='Projects'
+				a.navigation__list__link.nav__js(href='#services')='Services'
 			li.navigation__list__item 
-				a.navigation__list__link(href='#contact')='Contact'
+				a.navigation__list__link.nav__js(href='#projects')='Projects'
+			li.navigation__list__item 
+				a.navigation__list__link.nav__js(href='#contact')='Contact'

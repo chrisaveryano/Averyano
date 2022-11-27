@@ -36,6 +36,7 @@ html(class=isDesktop ? "desktop" : isTablet ? "tablet" : isPhone ? "phone" : "" 
 
 		// Stylesheets
 		link(rel="stylesheet", href="./main.css")
+		//- script(src="./avloaded.js")
 
 
 
@@ -43,7 +44,6 @@ html(class=isDesktop ? "desktop" : isTablet ? "tablet" : isPhone ? "phone" : "" 
 	body
 		include ./partials/preloader
 		include ./partials/navigation
-
 		main.content#content(data-template='home')
 			block content
 

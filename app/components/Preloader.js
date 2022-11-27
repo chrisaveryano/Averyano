@@ -13,9 +13,22 @@ export default class Preloader extends Component {
         numberText: '.preloader__number__text',
         circle: '.preloader__circle',
         images: document.querySelectorAll('img'),
+        videos: document.querySelectorAll('video'),
+        videoSources: document.querySelectorAll('source'),
       },
     });
 
+    this.currentColor = 'hero__tonys-pink';
+    this.colorArrayDefault = [
+      'hero__tonys-pink',
+      'hero__goldenrod',
+      'hero__biloba-flower',
+      'hero__lochmara',
+      'hero__monte-carlo',
+    ];
+
+    this.colorArrayNew = this.colorArrayDefault;
+    this.contentLoaded = false;
     // split({
     //   element: this.elements.title,
     //   expression: '<br>',
@@ -32,6 +45,9 @@ export default class Preloader extends Component {
     this.length = 0;
 
     this.createLoader();
+    this.timer = setTimeout(() => {
+      this.cancelLoader();
+    }, 5000);
   }
 
   createLoader() {
@@ -39,11 +55,51 @@ export default class Preloader extends Component {
       element.onload = (_) => this.onAssetLoaded();
       element.src = element.getAttribute('data-src');
     });
+
+    each(this.elements.videos, (element) => {
+      element.onloadeddata = (_) => {
+        this.onAssetLoaded();
+      };
+      element.poster = element.getAttribute('data-src');
+    });
+
+    each(this.elements.videoSources, (element) => {
+      element.src = element.getAttribute('data-src');
+      element.parentElement.load();
+    });
+  }
+
+  cancelLoader() {
+    console.log('loading cancelled');
+    each(this.elements.images, (element) => {
+      if (element.classList.contains('hero__gallery__media__image')) {
+        element.src = '';
+        element.style.display = 'none';
+
+        // cycle through colors array
+        // compare
+        // pick one, set current as picked
+        this.colorArrayNew = this.colorArrayNew.filter(
+          (val) => val !== this.currentColor
+        );
+
+        if (this.colorArrayNew.length === 0) {
+          this.colorArrayNew = this.colorArrayDefault;
+        }
+
+        const randomNum = Math.floor(Math.random() * this.colorArrayNew.length);
+
+        element.parentElement.classList.add(this.colorArrayNew[randomNum]);
+        this.currentColor = this.colorArrayNew[randomNum];
+      }
+    });
+    this.onLoaded();
   }
 
   onAssetLoaded() {
     this.length += 1;
-    const percent = this.length / this.elements.images.length;
+    const percent =
+      this.length / (this.elements.images.length + this.elements.videos.length);
     this.elements.numberText.innerHTML = `${Math.round(percent * 100)}%`;
     if (percent === 1) {
       this.onLoaded();
@@ -51,7 +107,11 @@ export default class Preloader extends Component {
   }
 
   onLoaded() {
-    return new Promise((resolve) => {
+    if (this.contentLoaded) return;
+
+    clearTimeout(this.timer);
+    this.contentLoaded = true;
+    this.loading = new Promise((resolve) => {
       this.animateOut = GSAP.timeline({ delay: 2 });
 
       // this.animateOut.to(this.elements.titleSpans, {
@@ -108,6 +168,8 @@ export default class Preloader extends Component {
       );
     });
   }
+
+  loadSite() {}
 
   destroy() {
     this.element.parentNode.removeChild(this.element);

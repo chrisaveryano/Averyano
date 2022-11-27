@@ -29,27 +29,34 @@ export default class Home extends Page {
   create() {
     super.create();
     super.createNavigation();
+    super.createServices();
+
+    this.media = window.matchMedia('(max-width: 768px)');
+    this.isMobile = !this.media.matches ? false : true;
 
     this.createContact();
     this.createHero();
   }
 
+  createHero() {
+    this.hero = new Hero();
+  }
   createContact() {
     this.contact = new Contact();
   }
-
-  createHero() {
-    this.hero = new Hero({
-      heroBanner: this.elements.heroBanner,
-      heroImages: this.elements.heroImages,
-    });
+  createServices() {
+    this.services = new Services();
   }
 
-  showHero(isMobile) {
-    if (this.hero && this.hero.showHero) {
-      this.hero.showHero(isMobile);
+  onResize() {
+    super.onResize();
+
+    this.isMobile = !this.media.matches ? false : true;
+    if (this.hero && this.hero.onResize) {
+      this.hero.onResize(this.isMobile);
     }
   }
+
   show() {
     const timeline = GSAP.timeline({
       delay: 0.1,

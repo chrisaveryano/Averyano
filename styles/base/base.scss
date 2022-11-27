@@ -3,7 +3,16 @@
 *:before {
   box-sizing: border-box;
 }
-
+:root {
+  --data-color-primary: #{$color-white-night};
+  --data-color-secondary: #{$color-dark-night};
+  --data-color-transparent: 1, 1, 1, 0.9;
+  --data-color-brightness-on: 1;
+  --data-color-brightness-off: 0.8;
+  --data-color-link: 196, 113, 237;
+  --data-color-servicesbg: 23, 23, 23;
+  --data-color-servicesel: 31, 31, 31;
+}
 html {
   @extend %cover;
 
@@ -11,9 +20,12 @@ html {
   font-size: calc(100vw / 1440 * 10);
   line-height: 1;
 
-  color: $color-white-night;
-  background: $color-dark-night;
+  color: rgb(var(--data-color-primary));
+  background: rgb(var(--data-color-secondary));
   overflow: hidden;
+
+  overscroll-behavior-x: none;
+
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -27,6 +39,10 @@ html {
     overflow: auto;
     overflow-x: hidden;
   }
+}
+
+body {
+  overscroll-behavior-x: none;
 }
 
 a {
@@ -49,6 +65,14 @@ h3 {
   font-weight: bold;
 }
 
+img {
+  pointer-events: none;
+}
 .content {
+  overflow: hidden;
+}
+
+.refresh {
+  touch-action: none;
   overflow: hidden;
 }

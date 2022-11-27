@@ -9,8 +9,8 @@ figure.home__gallery__item(id="g1")
 				img.video__controls.video__controls--pause(data-src="./images/paused.svg")
 				div.video__controls.video__controls--progressbar
 				button.video__controls.video__controls--fullscreen="Fullscreen"
-			video.home__gallery__item__video(width="640" height="360" poster="./images/prj1preview.jpg" playsinline loop auto muted)
-				source(src="./videos/phforukr.mp4" type="video/mp4")
+			video.home__gallery__item__video(width="640" height="360" data-src="./images/prj1preview.jpg" playsinline loop auto muted)
+				source(data-src="./videos/phforukr.mp4" type="video/mp4")
 	.home__gallery__item__bottom
 		img.home__gallery__item__icon(data-src="./images/pbox.png" width="16" height="16" title="made with Portfoliobox" alt="portfoliobox")
 		a.home__gallery__item__link(href='https://www.photographersforukraine.com/' target="_blank")='photographersforukraine.com'
@@ -26,8 +26,8 @@ figure.home__gallery__item(id="g2")
 				img.video__controls.video__controls--pause(data-src="./images/paused.svg")
 				div.video__controls.video__controls--progressbar
 				button.video__controls.video__controls--fullscreen="Fullscreen"
-			video.home__gallery__item__video(width="640" height="360" poster="./images/prj2preview.jpg" playsinline loop auto muted)
-				source(src="./videos/prelab.mp4" type="video/mp4")
+			video.home__gallery__item__video(width="640" height="360" data-src="./images/prj2preview.jpg" playsinline loop auto muted)
+				source(data-src="./videos/prelab.mp4" type="video/mp4")
 	.home__gallery__item__bottom
 		img.home__gallery__item__icon(data-src="./images/react.png" width="16" height="16" title="made with React JS" alt="react js")
 		a.home__gallery__item__link(href='https://prelab.design/' target="_blank")='prelab.design'
@@ -43,8 +43,8 @@ figure.home__gallery__item(id="g3")
 				img.video__controls.video__controls--pause(data-src="./images/paused.svg")
 				div.video__controls.video__controls--progressbar
 				button.video__controls.video__controls--fullscreen="Fullscreen"
-			video.home__gallery__item__video(width="640" height="360" poster="./images/prj3preview.jpg" playsinline loop auto muted)
-				source(src="./videos/drz.mp4" type="video/mp4")
+			video.home__gallery__item__video(width="640" height="360" data-src="./images/prj3preview.jpg" playsinline loop auto muted)
+				source(data-src="./videos/drz.mp4" type="video/mp4")
 	.home__gallery__item__bottom
 		img.home__gallery__item__icon(data-src="./images/javascript.png" width="16" height="16" title="made with JavaScript" alt="javascript")
 		a.home__gallery__item__link(href='https://victoria-chuiko.netlify.app/' target="_blank")='victoria-chuiko.com'
@@ -60,8 +60,8 @@ figure.home__gallery__item(id="g4")
 				img.video__controls.video__controls--pause(data-src="./images/paused.svg")
 				div.video__controls.video__controls--progressbar
 				button.video__controls.video__controls--fullscreen="Fullscreen"
-			video.home__gallery__item__video(width="640" height="360" poster="./images/prj4preview.jpg" playsinline loop auto muted)
-				source(src="./videos/cloudpoze.mp4" type="video/mp4")
+			video.home__gallery__item__video(width="640" height="360" data-src="./images/prj4preview.jpg" playsinline loop auto muted)
+				source(data-src="./videos/cloudpoze.mp4" type="video/mp4")
 	.home__gallery__item__bottom
 		img.home__gallery__item__icon(data-src="./images/pbox.png" width="16" height="16" title="made with Portfoliobox" alt="portfoliobox")
 		a.home__gallery__item__link(href='https://www.cloudpoze.com/' target="_blank")='cloudpoze.com'
@@ -76,7 +76,7 @@ figure.home__gallery__item(id="g5")
 				img.video__controls.video__controls--play(data-src="./images/locked.svg")
 				img.video__controls.video__controls--pause(data-src="./images/paused.svg")
 				//- button.video__controls.video__controls--fullscreen="Fullscreen"
-			img.home__gallery__item__video(width="640" height="360" data-src="./images/prj5preview.png")
+			img.home__gallery__item__video--image(width="640" height="360" data-src="./images/prj5preview.jpg")
 	.home__gallery__item__bottom
 		img.home__gallery__item__icon(data-src="./images/javascript.png" width="16" height="16" title="made with JavaScript" alt="javascript")
 		a.home__gallery__item__link="Under Construction"
